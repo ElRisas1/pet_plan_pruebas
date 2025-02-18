@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pet_plan_pruebas/pantalla_login.dart';
 
 void main() {
   runApp(const MainApp());
@@ -10,11 +11,8 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+      title: 'Juego de tronos personaje',
+      home: PantallaLogin(title: "Pantalla Login"),
     );
   }
 }
