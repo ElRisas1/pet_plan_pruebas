@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pet_plan_pruebas/pantalla_registro.dart';
 import 'package:pet_plan_pruebas/src/widgets/custom_button.dart';
 import 'package:pet_plan_pruebas/variables_globales.dart';
 
@@ -58,11 +59,16 @@ class _PantallaLoginState extends State<PantallaLogin> {
     }
   }
 
+  void cambiarPantallaRegistro(){
+   
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PantallaRegistro(title: "PantallaRegistro")));
+  }
+  
 
   @override
   Widget build(BuildContext context) {
     return  Scaffold( backgroundColor: const Color.fromARGB(100, 152, 184, 239),
-        body: SingleChildScrollView(child:Column(mainAxisAlignment: MainAxisAlignment.start,
+        body: SingleChildScrollView(child:Column(mainAxisAlignment: MainAxisAlignment.center,
             children:[
               const Divider(height: 80),
 
@@ -87,7 +93,7 @@ class _PantallaLoginState extends State<PantallaLogin> {
                       width: 100.0, //Ancho
                       height: 30.0, //Alto
                       callback: () {
-                        print("Registrarse");
+                        cambiarPantallaRegistro();
                       },
                       child: Text("Registrarse", style: TextStyle(fontSize: 17, color: const Color.fromARGB(255, 0, 89, 255), fontStyle: FontStyle.italic)), //Aqui se podria poner una foto
                     ),
