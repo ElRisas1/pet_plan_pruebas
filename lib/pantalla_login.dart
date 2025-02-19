@@ -49,9 +49,9 @@ class _PantallaLoginState extends State<PantallaLogin> {
     else{
       showDialog(context: context, builder: (context) => AlertDialog(
         title: Text("Error🤖"),
-        content: Text("No se puede llevar a cabo la acción por algún campo esta vacio, comprueba los datos e intentalo de nuevo"),
+        content: Text("No se puede llevar a cabo la acción por algún campo esta vacio, comprueba los datos e intentalo de nuevo", style: TextStyle(fontSize: 19),),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text("Volver"))
+          TextButton(onPressed: () => Navigator.pop(context), child: Text("Volver", style: TextStyle(fontSize: 19)))
         ],
       ));
       setState(() {

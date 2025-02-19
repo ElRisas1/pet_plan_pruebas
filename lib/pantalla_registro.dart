@@ -24,9 +24,10 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
     return  Scaffold( backgroundColor: const Color.fromARGB(100, 152, 184, 239),
         body: SingleChildScrollView(child:Column(mainAxisAlignment: MainAxisAlignment.center,
             children:[
+              AppBar(title: Text("AAA"),),
               const Divider(height: 80),
 
-              const Text("Pantalla de registro", style: TextStyle(fontSize: 17, color: Colors.black),)
+              const Text("Pantalla de registro", style: TextStyle(fontSize: 18, color: Colors.black),)
             ]
           )
         )
