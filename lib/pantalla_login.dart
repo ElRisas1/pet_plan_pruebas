@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pet_plan_pruebas/src/widgets/custom_button.dart';
+import 'package:pet_plan_pruebas/variables_globales.dart';
 
 
 class PantallaLogin extends StatefulWidget {
@@ -35,6 +36,27 @@ class _PantallaLoginState extends State<PantallaLogin> {
     color: Colors.grey);
   }
 
+  void botonEntrar(){  //En el futuro hará mas cosas
+    if(_campoUserEmail.text.isNotEmpty && _campoUserPass.text.isNotEmpty){
+      VariablesGlobales.loginEmail.add(_campoUserEmail.text);
+      VariablesGlobales.loginPassword.add(_campoUserPass.text);
+      _campoUserEmail.text = "";
+      _campoUserPass.text = "";
+
+      print("Usuarios en la lista: ${VariablesGlobales.loginEmail} \n Contraseñas en la lista: ${VariablesGlobales.loginPassword}");
+    }
+    else{
+      showDialog(context: context, builder: (context) => AlertDialog(
+        title: Text("Error🤖"),
+        content: Text("No se puede llevar a cabo la acción por algún campo esta vacio, comprueba los datos e intentalo de nuevo"),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text("Volver"))
+        ],
+      ));
+      setState(() {
+      });
+    }
+  }
 
 
   @override
@@ -42,7 +64,7 @@ class _PantallaLoginState extends State<PantallaLogin> {
     return  Scaffold( backgroundColor: const Color.fromARGB(100, 152, 184, 239),
         body: SingleChildScrollView(child:Column(mainAxisAlignment: MainAxisAlignment.start,
             children:[
-              const Divider(height: 60),
+              const Divider(height: 80),
 
               const Text("Pet Plan", style: TextStyle(fontSize: 40, color: Color.fromARGB(255, 226, 138, 23))),
               Padding(padding: EdgeInsets.all(20)),
@@ -50,30 +72,50 @@ class _PantallaLoginState extends State<PantallaLogin> {
               SizedBox(
                 height: 200.0,
                 width: 200.0,
-                child: Image.asset("assets/logoLorena.png"),
+                child: Image.asset("assets/logoLorena.png")
 
               ),
               Padding(padding: EdgeInsets.all(60)),
-              const Text("-Login into your account-", style: TextStyle(fontSize: 17, color: Color.fromARGB(218, 0, 0, 0))),
+              const Text("    -Accede a tu cuenta- \n\n   ¿Aún no tienes cuenta?", style: TextStyle(fontSize: 17, color: Color.fromARGB(218, 0, 0, 0))),
               
+              Container(
+                  margin:EdgeInsets.only(left: 100, right: 100), //Esto lo separa del margen por la derecha y la izquierda
+                  child:
+                    CustomButton( 
+                       //MI BOTON PRECIOSO para vosotros chat
+                      color: Color.fromARGB(0, 0, 0, 0),
+                      width: 100.0, //Ancho
+                      height: 30.0, //Alto
+                      callback: () {
+                        print("Registrarse");
+                      },
+                      child: Text("Registrarse", style: TextStyle(fontSize: 17, color: const Color.fromARGB(255, 0, 89, 255), fontStyle: FontStyle.italic)), //Aqui se podria poner una foto
+                    ),
+                ),
+
+
               Padding(padding: EdgeInsets.all(20)),
               Padding(
                 padding: const EdgeInsets.all(13),
-                child: TextField(  //Este es el campo de texto en el que se van
-                  controller: _campoUserEmail,  //introduciendo el correo del usuario 
+                child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
+                  controller: _campoUserEmail,  //Controlador para identificarlo
                   decoration: const InputDecoration( 
                     border: OutlineInputBorder(),
-                    labelText: "Introduce un correo..."),
+                    labelText: "Correo",
+                    labelStyle: TextStyle(fontSize: 18),
+                    ),
+                    
                 )),
 
               Padding(
                 padding: const EdgeInsets.all(13),
-                child: TextField(  //Este es el campo de texto en el que se van
-                  controller: _campoUserPass, //introduciendo el password del usuario
+                child: TextField(  //Este es el campo de texto en el que se van introduciendo el password del usuario
+                  controller: _campoUserPass, //Controlador para identificarlo
                   obscureText: _isSecurePassword,  //ocultando pass 
                   decoration:  InputDecoration( 
                     border: OutlineInputBorder(),
-                    labelText: "Introduce la contraseña...",
+                    labelText: "Contraseña",
+                      labelStyle: TextStyle(fontSize: 18),
                       suffixIcon: togglePassword(),
                   ),
                      
@@ -82,15 +124,16 @@ class _PantallaLoginState extends State<PantallaLogin> {
                   margin:EdgeInsets.only(left: 100, right: 100), //Esto lo separa del margen por la derecha y la izquierda
                   child:
                     CustomButton(  //MI BOTON PRECIOSO para vosotros chat
-                      color: Color.fromARGB(99, 59, 179, 87),
+                      color: Color.fromARGB(216, 150, 65, 163),
                       width: 170.0, //Ancho
                       height: 35.0, //Alto
                       callback: () {
+                        botonEntrar();
                       },
                       elevation: 100.0, //Esto añade algo de sombra a la caja elevandolo hacia arriba un poco
-                      child: Text("Entrar", style: TextStyle(fontSize: 17, color: Colors.black)), //Aqui se podria poner una foto
-                    )
-                )
+                      child: Text("Entrar", style: TextStyle(fontSize: 17, color: const Color.fromARGB(255, 255, 255, 255))), //Aqui se podria poner una foto
+                    ),
+                ),
               //ElevatedButton(onPressed: () => print("hola"), child: SizedBox(width: 120, height: 35, child: Center(child: Text("Entrar", style: TextStyle(fontSize: 16, color: const Color.fromARGB(255, 0, 0, 0))) )) )
             ]
           )
