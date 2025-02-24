@@ -18,7 +18,9 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
   late TextEditingController _campoUserNombreReg;
   late TextEditingController _campoUserTelefReg;
   late TextEditingController _campoUserCPReg;
-  String dropDownValue = 'Edad' ; //BOIRBORBOIR dropDownbutton
+
+  List <DropdownMenuItem<String>> listaItems = [];
+  String dropDownValue = 'edad_12' ; //BOIRBORBOIR dropDownbutton
 
   @override
   void initState(){
@@ -29,6 +31,19 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
     _campoUserCPReg = TextEditingController();
     //_campoUserEdadReg = DropdownButton();
   }
+
+  DropdownMenuItem<String> generarNumeros (){ 
+    var numeros  = 12;
+    //RangeValues rango = new RangeValues(12, 80);
+    for(var i= 12; i <= 80; i++){
+      
+      return DropdownMenuItem<String>(
+        value: 'edad_$numeros',
+        child: Text('$numeros'));
+    }
+    
+  }
+  
 
 
 
@@ -93,7 +108,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                     labelStyle: TextStyle(fontSize: 18),
                     ),
               )),
-
+              
               //Text field edad
               Padding(padding: EdgeInsets.all(10)),
               Padding(
@@ -101,10 +116,10 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                 child: DropdownButton<String>( 
                   value: dropDownValue,
                   icon: const Icon(Icons.arrow_drop_down),
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.black),
                   underline: Container(
                     height: 2,
-                    color: Colors.white,
+                    color:  Colors.black,
                   ),
                   onChanged: (String? newValue){
                     setState(() {
@@ -112,14 +127,16 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                     });
                   },
                   items: const [
+                    
                     DropdownMenuItem<String>(
-                      value: 'A',
-                      child: Text('AAA'),
+                      
+                      value: 'edad_12',
+                      child: Text('12'),
 
                     ),
                     DropdownMenuItem<String>(
-                      value: 'A',
-                      child: Text('AAA'),
+                      value: 'edad_13',
+                      child: Text('13'),
                       
                     )
                   ],  
