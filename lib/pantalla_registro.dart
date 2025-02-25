@@ -18,9 +18,11 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
   late TextEditingController _campoUserNombreReg;
   late TextEditingController _campoUserTelefReg;
   late TextEditingController _campoUserCPReg;
+  var numeros  = 11;
+  //late DropdownMenuItem<String> itemsMenu;
 
-  List <DropdownMenuItem<String>> listaItems = [];
-  String dropDownValue = 'edad_12' ; //BOIRBORBOIR dropDownbutton
+  
+  String dropDownValue = '12' ; //BOIRBORBOIR dropDownbutton
 
   @override
   void initState(){
@@ -32,18 +34,18 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
     //_campoUserEdadReg = DropdownButton();
   }
 
-  DropdownMenuItem<String> generarNumeros (){ 
-    var numeros  = 12;
-    //RangeValues rango = new RangeValues(12, 80);
-    for(var i= 12; i <= 80; i++){
-      
-      return DropdownMenuItem<String>(
-        value: 'edad_$numeros',
-        child: Text('$numeros'));
-    }
-    
+  List <DropdownMenuItem<String>> generarNumeros (){ 
+
+    List <DropdownMenuItem<String>> listaItems = []; 
+
+    for(var i =12; i<=80; i++){
+        listaItems.add(DropdownMenuItem<String>(
+            value: '$i',
+            child: Text('$i')));
+      }
+    return listaItems;
   }
-  
+
 
 
 
@@ -126,20 +128,8 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                       dropDownValue = newValue!;
                     });
                   },
-                  items: const [
-                    
-                    DropdownMenuItem<String>(
-                      
-                      value: 'edad_12',
-                      child: Text('12'),
-
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'edad_13',
-                      child: Text('13'),
-                      
-                    )
-                  ],  
+                  
+                  items: generarNumeros() 
                 ),
               ),
             ] //Children
