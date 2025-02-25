@@ -113,9 +113,15 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
               
               //Text field edad
               Padding(padding: EdgeInsets.all(10)),
-              Padding(
-                padding: const EdgeInsets.all(13),
-                child: DropdownButton<String>( 
+              Row(mainAxisAlignment: MainAxisAlignment.start,
+                //padding: const EdgeInsets.all(13),
+                
+                children:[
+                  
+                  Text("selecciona edad"),
+                  Padding(padding: EdgeInsets.all(10)),
+
+                  DropdownButton<String>( 
                   value: dropDownValue,
                   icon: const Icon(Icons.arrow_drop_down),
                   style: TextStyle(color: Colors.black),
@@ -130,7 +136,8 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                   },
                   
                   items: generarNumeros() 
-                ),
+                ),] 
+                
               ),
             ] //Children
         )
