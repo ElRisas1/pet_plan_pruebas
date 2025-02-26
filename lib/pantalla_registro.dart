@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'constructor_registro.dart';
+import 'package:pet_plan_pruebas/src/widgets/custom_button.dart';
+
 
 class PantallaRegistro extends StatefulWidget {
   const PantallaRegistro({super.key, required this.title});
@@ -22,7 +24,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
   //late DropdownMenuItem<String> itemsMenu;
 
   
-  String dropDownValue = '12' ; //BOIRBORBOIR dropDownbutton
+  String dropDownDefaultValue = '12' ; //BOIRBORBOIR dropDownbutton
 
   @override
   void initState(){
@@ -51,13 +53,13 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold( backgroundColor: const Color.fromARGB(100, 152, 184, 239),
+    return  Scaffold( backgroundColor: const Color.fromARGB(236, 187, 205, 235),
         body: SingleChildScrollView(child:Column(mainAxisAlignment: MainAxisAlignment.center,
             children:[
               AppBar(title: Text("Registro de usuario"),),
               const Divider(height: 80),
 
-              const Text("Pantalla de registro", style: TextStyle(fontSize: 18, color: Colors.black)),
+              const Text("Pantalla de registro", style: TextStyle(fontSize: 28, color: Colors.black)),
               
               //Text field correo
               Padding(padding: EdgeInsets.all(40)),
@@ -90,7 +92,8 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
               Padding(
                 padding: const EdgeInsets.all(13),
                 child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
-                  controller: _campoUserTelefReg,  //Controlador para identificarlo
+                  controller: _campoUserTelefReg, //Controlador para identificarlo
+                  keyboardType: TextInputType.numberWithOptions(), //Solo ofrece teclado numerico
                   decoration: const InputDecoration( 
                     border: OutlineInputBorder(),
                     labelText: "Telefono",
@@ -104,6 +107,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                 padding: const EdgeInsets.all(13),
                 child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
                   controller: _campoUserCPReg,  //Controlador para identificarlo
+                  keyboardType: TextInputType.numberWithOptions(), //Solo ofrece teclado numerico
                   decoration: const InputDecoration( 
                     border: OutlineInputBorder(),
                     labelText: "Codigo Postal",
@@ -113,16 +117,16 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
               
               //Text field edad
               Padding(padding: EdgeInsets.all(10)),
-              Row(mainAxisAlignment: MainAxisAlignment.start,
+              Row(mainAxisAlignment: MainAxisAlignment.center,
                 //padding: const EdgeInsets.all(13),
                 
                 children:[
                   
-                  Text("selecciona edad"),
-                  Padding(padding: EdgeInsets.all(10)),
+                  Text("Selecciona edad", style: TextStyle(fontSize: 18)),
+                  Padding(padding: EdgeInsets.all(60)),
 
                   DropdownButton<String>( 
-                  value: dropDownValue,
+                  value: dropDownDefaultValue,
                   icon: const Icon(Icons.arrow_drop_down),
                   style: TextStyle(color: Colors.black),
                   underline: Container(
@@ -131,14 +135,28 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                   ),
                   onChanged: (String? newValue){
                     setState(() {
-                      dropDownValue = newValue!;
+                      dropDownDefaultValue = newValue!;
                     });
                   },
                   
                   items: generarNumeros() 
                 ),] 
-                
               ),
+
+               Container(
+                  margin:EdgeInsets.only(left: 100, right: 100), //Esto lo separa del margen por la derecha y la izquierda
+                  child:
+                    CustomButton(  //MI BOTON PRECIOSO para vosotros chat
+                      color: Color.fromARGB(215, 163, 65, 122),
+                      width: 170.0, //Ancho
+                      height: 35.0, //Alto
+                      callback: () {
+                        print("Boton crear Usuario pulsado");
+                      },
+                      elevation: 100.0, //Esto añade algo de sombra a la caja elevandolo hacia arriba un poco
+                      child: Text("Registrar", style: TextStyle(fontSize: 17, color: const Color.fromARGB(255, 255, 255, 255))), //Aqui se podria poner una foto
+                    ),
+                ),
             ] //Children
         )
       )
