@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pet_plan_pruebas/pantalla_login.dart';
 import 'constructor_registro.dart';
 import 'package:pet_plan_pruebas/src/widgets/custom_button.dart';
 
@@ -48,6 +49,10 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
     return listaItems;
   }
 
+  void cambiarPantallaLogin(){
+   
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PantallaLogin(title: "Pantalla Login")));
+  }
 
 
 
@@ -151,7 +156,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                       width: 170.0, //Ancho
                       height: 35.0, //Alto
                       callback: () {
-                        print("Boton crear Usuario pulsado");
+                        cambiarPantallaLogin();
                       },
                       elevation: 100.0, //Esto añade algo de sombra a la caja elevandolo hacia arriba un poco
                       child: Text("Registrar", style: TextStyle(fontSize: 17, color: const Color.fromARGB(255, 255, 255, 255))), //Aqui se podria poner una foto
