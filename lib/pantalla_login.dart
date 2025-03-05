@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:pet_plan_pruebas/pantalla_chatia.dart';
 import 'package:pet_plan_pruebas/pantalla_registro.dart';
 import 'package:pet_plan_pruebas/src/widgets/custom_button.dart';
 import 'package:pet_plan_pruebas/variables_globales.dart';
+
 
 
 class PantallaLogin extends StatefulWidget {
@@ -18,6 +20,9 @@ class _PantallaLoginState extends State<PantallaLogin> {
   //AQUI VAN LAS VARIABLES GLOBALES//
   late TextEditingController _campoUserEmail;
   late TextEditingController _campoUserPass;
+
+
+
   bool _isSecurePassword = true;  
 
   @override
@@ -26,6 +31,8 @@ class _PantallaLoginState extends State<PantallaLogin> {
     _campoUserEmail = TextEditingController();
     _campoUserPass = TextEditingController();
   }
+
+
 
 
   Widget togglePassword(){ //Este es el TOGGLE de ver o no ver la password
@@ -45,6 +52,8 @@ class _PantallaLoginState extends State<PantallaLogin> {
       _campoUserPass.text = "";
 
       print("Usuarios en la lista: ${VariablesGlobales.loginEmail} \n Contraseñas en la lista: ${VariablesGlobales.loginPassword}");
+
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PantallaChatIA(title: "PantallaChatIA")));
     }
     else{
       showDialog(context: context, builder: (context) => AlertDialog(
@@ -67,7 +76,7 @@ class _PantallaLoginState extends State<PantallaLogin> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold( backgroundColor: const Color.fromARGB(100, 152, 184, 239),
+    return  Scaffold( backgroundColor: const Color.fromARGB(236, 187, 205, 235),
         body: SingleChildScrollView(child:Column(mainAxisAlignment: MainAxisAlignment.center,
             children:[
               const Divider(height: 80),

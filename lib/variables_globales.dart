@@ -7,4 +7,9 @@ class VariablesGlobales {
   static List <String> loginPassword = [];
 
   static List <ConstructorRegistro> usuariosRegistrados = [];
+
+  
 }
+
+
+//API MODEL GEMINI

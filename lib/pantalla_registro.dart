@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pet_plan_pruebas/pantalla_login.dart';
 import 'constructor_registro.dart';
 import 'package:pet_plan_pruebas/src/widgets/custom_button.dart';
+import 'variables_globales.dart';
 
 
 class PantallaRegistro extends StatefulWidget {
@@ -20,6 +22,8 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
   late TextEditingController _campoUserNombreReg;
   late TextEditingController _campoUserTelefReg;
   late TextEditingController _campoUserCPReg;
+  late TextEditingController _campoUserPass1;
+  late TextEditingController _campoUserPass2; 
   var numeros  = 11;
   //late DropdownMenuItem<String> itemsMenu;
 
@@ -33,6 +37,8 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
     _campoUserNombreReg = TextEditingController();
     _campoUserTelefReg = TextEditingController();
     _campoUserCPReg = TextEditingController();
+    _campoUserPass1 = TextEditingController();
+    _campoUserPass2 = TextEditingController();
     //_campoUserEdadReg = DropdownButton();
   }
 
@@ -48,6 +54,25 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
     return listaItems;
   }
 
+  void guardarDatosCambiarPantallaLogin(){
+    if(_campoUserEmailReg.text.isNotEmpty && _campoUserPass1.text.isNotEmpty && _campoUserPass2.text.isNotEmpty && _campoUserEmailReg.text.isNotEmpty && _campoUserCPReg.text.isNotEmpty && _campoUserTelefReg.text.isNotEmpty){
+      
+      
+
+      //VariablesGlobales.usuariosRegistrados.add();
+
+      
+
+
+     // _campoUserEmail.text = "";
+     // _campoUserPass.text = "";
+
+      print("Usuarios en la lista: ${VariablesGlobales.loginEmail} \n Contraseñas en la lista: ${VariablesGlobales.loginPassword}");
+    
+
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PantallaLogin(title: "Pantalla Login")));
+    }
+  }
 
 
 
@@ -151,7 +176,8 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                       width: 170.0, //Ancho
                       height: 35.0, //Alto
                       callback: () {
-                        print("Boton crear Usuario pulsado");
+                        guardarDatosCambiarPantallaLogin();
+                        
                       },
                       elevation: 100.0, //Esto añade algo de sombra a la caja elevandolo hacia arriba un poco
                       child: Text("Registrar", style: TextStyle(fontSize: 17, color: const Color.fromARGB(255, 255, 255, 255))), //Aqui se podria poner una foto
@@ -162,4 +188,5 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
       )
     );
   }
+  
 }
