@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pet_plan_pruebas/pantalla_mainscreen.dart';
+import 'package:pet_plan_pruebas/pantalla_chatia.dart';
 import 'package:pet_plan_pruebas/pantalla_registro.dart';
 import 'package:pet_plan_pruebas/src/widgets/custom_button.dart';
 import 'package:pet_plan_pruebas/variables_globales.dart';
@@ -53,7 +53,7 @@ class _PantallaLoginState extends State<PantallaLogin> {
 
       print("Usuarios en la lista: ${VariablesGlobales.loginEmail} \n Contraseñas en la lista: ${VariablesGlobales.loginPassword}");
 
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PantallaPrincipal(title: "PantallaPrincipal")));
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PantallaChatIA(title: "PantallaChatIA")));
     }
     else{
       showDialog(context: context, builder: (context) => AlertDialog(

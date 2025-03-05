@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:pet_plan_pruebas/src/widgets/custom_button.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
-class PantallaPrincipal extends StatefulWidget {
-  const PantallaPrincipal({super.key, required this.title});
+class PantallaChatIA extends StatefulWidget {
+  const PantallaChatIA({super.key, required this.title});
 
   final String title;
 
   @override
-  State<PantallaPrincipal> createState() => _PantallaPrincipalState();
+  State<PantallaChatIA> createState() => _PantallaChatIAState();
 }
 
-class _PantallaPrincipalState extends State<PantallaPrincipal> {
+class _PantallaChatIAState extends State<PantallaChatIA> {
 
   //AQUI VAN LAS VARIABLES GLOBALES//
   final apiKey = 'AIzaSyBhCntUyCG397ROTUdrp8q7lNCKI5oLL8k';
@@ -93,8 +93,6 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                     height: 30.0, //Alto
                     callback: () {
                       chatIA();
-                      
-                      
                     },
                     child: Text("Llamar a la IA", style: TextStyle(fontSize: 17, color: const Color.fromARGB(255, 0, 89, 255), fontStyle: FontStyle.normal)), //Aqui se podria poner una foto
                   ),
