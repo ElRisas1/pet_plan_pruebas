@@ -24,7 +24,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
     
       return  Scaffold( 
         
-        backgroundColor: const Color.fromARGB(248, 239, 242, 159),
+        backgroundColor: const Color.fromARGB(248, 238, 220, 138),
         body: 
         
         content(),
