@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pet_plan_pruebas/pantalla_chatia.dart';
+import 'package:pet_plan_pruebas/pantalla_main.dart';
 import 'package:pet_plan_pruebas/pantalla_registro.dart';
+import 'package:pet_plan_pruebas/pantalla_reset_pass.dart';
 import 'package:pet_plan_pruebas/src/widgets/custom_button.dart';
 import 'package:pet_plan_pruebas/variables_globales.dart';
 
@@ -20,9 +22,6 @@ class _PantallaLoginState extends State<PantallaLogin> {
   //AQUI VAN LAS VARIABLES GLOBALES//
   late TextEditingController _campoUserEmail;
   late TextEditingController _campoUserPass;
-
-
-
   bool _isSecurePassword = true;  
 
   @override
@@ -53,7 +52,7 @@ class _PantallaLoginState extends State<PantallaLogin> {
 
       print("Usuarios en la lista: ${VariablesGlobales.loginEmail} \n Contraseñas en la lista: ${VariablesGlobales.loginPassword}");
 
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PantallaChatIA(title: "PantallaChatIA")));
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PantallaPrincipal(title: "PantallaChatIA")));
     }
     else{
       showDialog(context: context, builder: (context) => AlertDialog(
@@ -76,7 +75,7 @@ class _PantallaLoginState extends State<PantallaLogin> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold( backgroundColor: const Color.fromARGB(236, 187, 205, 235),
+    return  Scaffold( backgroundColor: const Color.fromARGB(235, 175, 220, 224),
         body: SingleChildScrollView(child:Column(mainAxisAlignment: MainAxisAlignment.center,
             children:[
               const Divider(height: 80),
@@ -135,6 +134,24 @@ class _PantallaLoginState extends State<PantallaLogin> {
                   ),
                      
                 )),
+
+                Container(
+                  margin:EdgeInsets.only(left: 100, right: 100), //Esto lo separa del margen por la derecha y la izquierda
+                  child:
+                    CustomButton( 
+                       //MI BOTON PRECIOSO para vosotros chat
+                      color: Color.fromARGB(0, 0, 0, 0),
+                      width: 300.0, //Ancho
+                      height: 30.0, //Alto
+                      callback: () {
+                         Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PantallaResetPass(title: "PantallaRecuperarContraseña")));
+                      },
+                      child: Text("¿Has olvidado la contraseña?", style: TextStyle(fontSize: 17, color: const Color.fromARGB(157, 74, 76, 78), fontStyle: FontStyle.italic)), //Aqui se podria poner una foto
+                    ),
+                ),
+                
+                Padding(padding: EdgeInsets.all(20)),
+
                 Container(
                   margin:EdgeInsets.only(left: 100, right: 100), //Esto lo separa del margen por la derecha y la izquierda
                   child:
@@ -149,6 +166,8 @@ class _PantallaLoginState extends State<PantallaLogin> {
                       child: Text("Entrar", style: TextStyle(fontSize: 17, color: const Color.fromARGB(255, 255, 255, 255))), //Aqui se podria poner una foto
                     ),
                 ),
+                Padding(padding: EdgeInsets.all(40)),
+
               //ElevatedButton(onPressed: () => print("hola"), child: SizedBox(width: 120, height: 35, child: Center(child: Text("Entrar", style: TextStyle(fontSize: 16, color: const Color.fromARGB(255, 0, 0, 0))) )) )
             ]
           )

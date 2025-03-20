@@ -37,7 +37,7 @@ class _PantallaChatIAState extends State<PantallaChatIA> {
     final prompt = _campoPrompt.text;
     final content = [Content.text(prompt)];
     final response = await model.generateContent(content);
-
+    
     
     respuesta = response.text!.replaceAll(RegExp(r'\**'), '').toString();
     print(response.text);
