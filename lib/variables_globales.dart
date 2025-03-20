@@ -14,21 +14,3 @@ class VariablesGlobales {
 
 
 //API MODEL GEMINI
-
-class IaChatResponse{
-  void chatIA() async {
-
-  final apiKey = 'AIzaSyBhCntUyCG397ROTUdrp8q7lNCKI5oLL8k';
-
-  final model = GenerativeModel(
-    model: 'gemini-1.5-flash-latest',
-    apiKey: apiKey,
-  );
-
-  final prompt = 'What you want';
-  final content = [Content.text(prompt)];
-  final response = await model.generateContent(content);
-
-  print(response.text);
-  }
-}
