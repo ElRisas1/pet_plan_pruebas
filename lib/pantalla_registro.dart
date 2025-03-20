@@ -1,12 +1,21 @@
+//import 'dart:nativewrappers/_internal/vm/lib/developer.dart';
+import 'dart:developer';
+
+
 import 'package:flutter/material.dart';
 import 'package:pet_plan_pruebas/pantalla_login.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'constructor_registro.dart';
 import 'package:pet_plan_pruebas/src/widgets/custom_button.dart';
 import 'variables_globales.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
+const supabaseUrl = 'https://fzukoqnipqclppkpotbc.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6dWtvcW5pcHFjbHBwa3BvdGJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk4NzQ5ODAsImV4cCI6MjA1NTQ1MDk4MH0.Y7fmZFE3SiXvaSaYYNB1Y_WuWvAXNnA9Xdg0aJxEjjc';
 
 class PantallaRegistro extends StatefulWidget {
   const PantallaRegistro({super.key, required this.title});
+  
 
   final String title;
 
@@ -16,46 +25,41 @@ class PantallaRegistro extends StatefulWidget {
 
 
 class _PantallaRegistroState extends State<PantallaRegistro> {
-
+final _supabaseAuth = Supabase.instance.client.auth;
   //VARIABLES//
-  late TextEditingController _campoUserEmailReg;
-  late TextEditingController _campoUserNombreReg;
-  late TextEditingController _campoUserTelefReg;
-  late TextEditingController _campoUserCPReg;
-  late TextEditingController _campoUserPass1;
-  late TextEditingController _campoUserPass2; 
-  var numeros  = 11;
+  final _campoUserEmailReg = TextEditingController();
+  final _campoUserNombreReg = TextEditingController();
+  final  _campoUserTelefReg = TextEditingController();
+  final _campoUserPassReg = TextEditingController();
+  
+
   //late DropdownMenuItem<String> itemsMenu;
 
-  
-  String dropDownDefaultValue = '12' ; //BOIRBORBOIR dropDownbutton
+  bool _isSecurePassword = true;  
+
 
   @override
-  void initState(){
-    super.initState();
-    _campoUserEmailReg = TextEditingController();
-    _campoUserNombreReg = TextEditingController();
-    _campoUserTelefReg = TextEditingController();
-    _campoUserCPReg = TextEditingController();
-    _campoUserPass1 = TextEditingController();
-    _campoUserPass2 = TextEditingController();
+  void dispose(){
+    super.dispose();
+    _campoUserEmailReg.dispose();
+    _campoUserTelefReg.dispose();
+    _campoUserPassReg.dispose();
     //_campoUserEdadReg = DropdownButton();
   }
 
-  List <DropdownMenuItem<String>> generarNumeros (){ 
 
-    List <DropdownMenuItem<String>> listaItems = []; 
-
-    for(var i =12; i<=80; i++){
-        listaItems.add(DropdownMenuItem<String>(
-            value: '$i',
-            child: Text('$i')));
-      }
-    return listaItems;
+  
+  Widget togglePassword(){ //Este es el TOGGLE de ver o no ver la password
+    return IconButton(onPressed: (){
+      setState(() {
+        _isSecurePassword = !_isSecurePassword;
+      });
+    }, icon: _isSecurePassword ? Icon(Icons.visibility) : Icon(Icons.visibility_off),
+    color: Colors.grey);
   }
 
   void guardarDatosCambiarPantallaLogin(){
-    if(_campoUserEmailReg.text.isNotEmpty && _campoUserPass1.text.isNotEmpty && _campoUserPass2.text.isNotEmpty && _campoUserEmailReg.text.isNotEmpty && _campoUserCPReg.text.isNotEmpty && _campoUserTelefReg.text.isNotEmpty){
+    if(_campoUserEmailReg.text.isNotEmpty && _campoUserEmailReg.text.isNotEmpty && _campoUserTelefReg.text.isNotEmpty){
       
       
 
@@ -125,49 +129,23 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                     labelStyle: TextStyle(fontSize: 18),
                     ),
               )),
-            
-              //Text field cp
-              Padding(padding: EdgeInsets.all(10)),
+
+                Padding(padding: EdgeInsets.all(10)),
               Padding(
                 padding: const EdgeInsets.all(13),
                 child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
-                  controller: _campoUserCPReg,  //Controlador para identificarlo
+                  controller: _campoUserPassReg, 
+                  obscureText: _isSecurePassword,
+                  //Controlador para identificarlo
                   keyboardType: TextInputType.numberWithOptions(), //Solo ofrece teclado numerico
-                  decoration: const InputDecoration( 
+                  decoration:  InputDecoration( 
                     border: OutlineInputBorder(),
-                    labelText: "Codigo Postal",
+                    labelText: "Contraseña",
                     labelStyle: TextStyle(fontSize: 18),
+                    suffixIcon: togglePassword(),
                     ),
               )),
-              
-              //Text field edad
-              Padding(padding: EdgeInsets.all(10)),
-              Row(mainAxisAlignment: MainAxisAlignment.center,
-                //padding: const EdgeInsets.all(13),
-                
-                children:[
-                  
-                  Text("Selecciona edad", style: TextStyle(fontSize: 18)),
-                  Padding(padding: EdgeInsets.all(60)),
-
-                  DropdownButton<String>( 
-                  value: dropDownDefaultValue,
-                  icon: const Icon(Icons.arrow_drop_down),
-                  style: TextStyle(color: Colors.black),
-                  underline: Container(
-                    height: 2,
-                    color:  Colors.black,
-                  ),
-                  onChanged: (String? newValue){
-                    setState(() {
-                      dropDownDefaultValue = newValue!;
-                    });
-                  },
-                  
-                  items: generarNumeros() 
-                ),] 
-              ),
-
+    
                Container(
                   margin:EdgeInsets.only(left: 100, right: 100), //Esto lo separa del margen por la derecha y la izquierda
                   child:
@@ -175,9 +153,33 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                       color: Color.fromARGB(215, 163, 65, 122),
                       width: 170.0, //Ancho
                       height: 35.0, //Alto
-                      callback: () {
-                        guardarDatosCambiarPantallaLogin();
-                        
+                      callback: () async {
+                        print("HOLA");
+                        try{
+                          final res = await _supabaseAuth.signUp(
+                          email: _campoUserEmailReg.text,
+                          password: _campoUserPassReg.text,
+                          );
+                          print(res);
+                          if (res.user != null) {
+                            log("Registrado");
+                            guardarDatosCambiarPantallaLogin();
+
+                            // Mostrar mensaje emergente (SnackBar)
+                          //if(mounted){
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text("Registro exitoso"),
+                                duration: Duration(seconds: 3),
+                                
+                              ),
+                            );
+                           //}
+                          }
+                        }
+                        catch (e){
+                        print("fallo: $e");
+                        }
                       },
                       elevation: 100.0, //Esto añade algo de sombra a la caja elevandolo hacia arriba un poco
                       child: Text("Registrar", style: TextStyle(fontSize: 17, color: const Color.fromARGB(255, 255, 255, 255))), //Aqui se podria poner una foto
