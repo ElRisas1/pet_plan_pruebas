@@ -1,5 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+// pantallas
+import 'package:pet_plan_pruebas/pantalla_ajustes.dart';
+import 'package:pet_plan_pruebas/pantalla_ayuda.dart';
 import 'package:pet_plan_pruebas/pantalla_chatia.dart';
 import 'package:pet_plan_pruebas/pantalla_mascota.dart';
 import 'package:pet_plan_pruebas/pantalla_perfil.dart';
@@ -20,10 +23,38 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
 
   //VARIABLES
 
+   //Lista de mascotas
   final List<String> mascotas = ["Firulais", "Luna", "Max"];
-  final String nombrePrueba = "chamaquito";
+
+  final String nombrePrueba = "chamaquito"; //nombre de prueba para el usuario
+
+  //lista de recordatorios de prueba
   List<String> recordatorios = ["saca a firulais a pasear", "Dale la pastilla a Luna", "Hoy le toca veterinario a Max" ];
 
+  //lista de items para el dropdown menu
+  List<String> menu = ["Menu","Ajustes", "Ayuda"];
+
+  String? selectedItem = "Menu";  //item seleccionado, empieza siendo 'menu'
+
+  
+  /// Void para la gestionar las selecciones
+  void onMenuSelected(String? item) {
+      if (item == null) return; // si es null
+
+      setState(() => selectedItem = item); // actualiza el estado con el ítem seleccionado
+
+      if (item == "Ajustes") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PantallaAjustes(title: '',)),
+        );
+      } else if (item == "Ayuda") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PantallaAyuda(title: '',)),
+        );
+      }
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +74,21 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
         backgroundColor: Color.fromARGB(100, 255, 242, 168),
       ),
 
+      // DROP DOWN MENU //
+      Positioned(
+            top: 50,
+            left: 15,
+            child: DropdownButton<String>(
+              value: selectedItem, // Puede ser nulo
+              hint: Text("Selecciona"), // Texto cuando no hay selección
+              items: menu.map((item) => DropdownMenuItem<String>(
+                value: item,
+                child: Text(item, style: TextStyle(fontSize: 15)),
+              )).toList(),
+              onChanged: onMenuSelected,
+            ),
+          ),
+    
       // IMAGEN DE PERFIL - Ubicación en la parte superior derecha
       Positioned(
         top: 50, 
