@@ -166,7 +166,6 @@ final _supabaseAuth = Supabase.instance.client.auth;
                             guardarDatosCambiarPantallaLogin();
 
                             // Mostrar mensaje emergente (SnackBar)
-                          //if(mounted){
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text("Registro exitoso"),
@@ -174,7 +173,7 @@ final _supabaseAuth = Supabase.instance.client.auth;
                                 
                               ),
                             );
-                           //}
+                           
                           }
                         }
                         catch (e){

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pet_plan_pruebas/pantalla_chatia.dart';
+import 'package:pet_plan_pruebas/pantalla_main.dart';
 import 'package:pet_plan_pruebas/pantalla_registro.dart';
 import 'package:pet_plan_pruebas/src/widgets/custom_button.dart';
 import 'package:pet_plan_pruebas/variables_globales.dart';
-
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:pet_plan_pruebas/pantalla_reset_pass.dart';
 
 
 class PantallaLogin extends StatefulWidget {
@@ -44,29 +46,46 @@ class _PantallaLoginState extends State<PantallaLogin> {
     color: Colors.grey);
   }
 
-  void botonEntrar(){  //En el futuro hará mas cosas
-    if(_campoUserEmail.text.isNotEmpty && _campoUserPass.text.isNotEmpty){
-      VariablesGlobales.loginEmail.add(_campoUserEmail.text);
-      VariablesGlobales.loginPassword.add(_campoUserPass.text);
-      _campoUserEmail.text = "";
-      _campoUserPass.text = "";
+  void botonEntrar() async {  //En el futuro hará mas cosas
+    final email = _campoUserEmail.text.trim();
+    final password = _campoUserPass.text.trim();
 
-      print("Usuarios en la lista: ${VariablesGlobales.loginEmail} \n Contraseñas en la lista: ${VariablesGlobales.loginPassword}");
+    if(email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Por favor, completa todos los campos.")),
+      );
+      return;
+    }
 
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PantallaChatIA(title: "PantallaChatIA")));
+  
+    try {
+    final response = await Supabase.instance.client.auth.signInWithPassword(
+      email: email,
+      password: password,
+     );
+
+    if (response.user != null){
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const PantallaPrincipal(title: "PantallaPrincipal")),
+        );
     }
-    else{
-      showDialog(context: context, builder: (context) => AlertDialog(
-        title: Text("Error🤖"),
-        content: Text("No se puede llevar a cabo la acción por algún campo esta vacio, comprueba los datos e intentalo de nuevo", style: TextStyle(fontSize: 19),),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text("Volver", style: TextStyle(fontSize: 19)))
-        ],
-      ));
-      setState(() {
-      });
-    }
+  } on AuthException catch(e) {
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Error:Verifica tu correo o contraseña."))
+      );
+
+  }catch(e){
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Error inesperado: ${e.toString()}")),
+      );
   }
+     
+    }
+    
+    
+  
 
   void cambiarPantallaRegistro(){
    
@@ -108,7 +127,20 @@ class _PantallaLoginState extends State<PantallaLogin> {
                     ),
                 ),
 
-
+               Container(
+                  margin:EdgeInsets.only(left: 100, right: 100), //Esto lo separa del margen por la derecha y la izquierda
+                  child:
+                    CustomButton( 
+                       //MI BOTON PRECIOSO para vosotros chat
+                      color: Color.fromARGB(0, 0, 0, 0),
+                      width: 300.0, //Ancho
+                      height: 30.0, //Alto
+                      callback: () {
+                         Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PantallaResetPass(title: "PantallaRecuperarContraseña")));
+                      },
+                      child: Text("¿Has olvidado la contraseña?", style: TextStyle(fontSize: 17, color: const Color.fromARGB(157, 74, 76, 78), fontStyle: FontStyle.italic)), //Aqui se podria poner una foto
+                    ),
+                ),
               Padding(padding: EdgeInsets.all(20)),
               Padding(
                 padding: const EdgeInsets.all(13),
