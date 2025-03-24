@@ -49,10 +49,10 @@ class _PantallaChatIAState extends State<PantallaChatIA> {
   @override
   Widget build(BuildContext context) {
       return  Scaffold( backgroundColor: const Color.fromARGB(249, 249, 230, 122),
+      appBar: AppBar(title: Text("ChatIA")),
         body: SingleChildScrollView(child:Column(mainAxisAlignment: MainAxisAlignment.center,
             children:[
               const Divider(height: 80),
-
               const Text("Mis Mascotas", style: TextStyle(fontSize: 40, color: Color.fromARGB(255, 226, 138, 23))),
               Padding(padding: EdgeInsets.all(20)),
 
