@@ -48,12 +48,13 @@ class _PantallaChatIAState extends State<PantallaChatIA> {
   
   @override
   Widget build(BuildContext context) {
-      return  Scaffold( backgroundColor: const Color.fromARGB(249, 249, 230, 122),
-      appBar: AppBar(title: Text("ChatIA")),
+      return  Scaffold( 
+        backgroundColor: const Color.fromARGB(248, 152, 184, 239),
+        appBar: AppBar(title: Text("Chat IA")),
         body: SingleChildScrollView(child:Column(mainAxisAlignment: MainAxisAlignment.center,
             children:[
               const Divider(height: 80),
-              const Text("Mis Mascotas", style: TextStyle(fontSize: 40, color: Color.fromARGB(255, 226, 138, 23))),
+              const Text("Habla con nuestra IA", style: TextStyle(fontSize: 37, color: Color.fromARGB(255, 0, 0, 0))),
               Padding(padding: EdgeInsets.all(20)),
 
               SizedBox(
@@ -94,7 +95,7 @@ class _PantallaChatIAState extends State<PantallaChatIA> {
                     callback: () {
                       chatIA();
                     },
-                    child: Text("Llamar a la IA", style: TextStyle(fontSize: 17, color: const Color.fromARGB(255, 0, 89, 255), fontStyle: FontStyle.normal)), //Aqui se podria poner una foto
+                    child: Text("Enviar", style: TextStyle(fontSize: 17, color: const Color.fromARGB(255, 0, 89, 255), fontStyle: FontStyle.normal)), //Aqui se podria poner una foto
                   ),
                 ),
               Padding(padding: EdgeInsets.all(20)),
