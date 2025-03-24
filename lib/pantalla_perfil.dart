@@ -8,7 +8,7 @@ import 'package:pet_plan_pruebas/pantalla_main.dart';
       @override
       Widget build(BuildContext context) {
         return Scaffold(
-          backgroundColor: Colors.blue[200], // Fondo azul claro
+          backgroundColor: const Color.fromARGB(248, 152, 184, 239), // Fondo azul claro
           appBar: AppBar(title: Text("Pantallaperfil")),
           body: SafeArea(
             child: SingleChildScrollView(
