@@ -64,6 +64,13 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
     );
   }
 
+  // MAPA DE MASCOTAS E IMAGENES //
+  Map<String, String> imagenesMascotas = {
+    "Firulais": "assets/Perro1.png",
+    "Luna": "assets/gatobonito.jpg",
+    "Max": "assets/GatoEgipcio.png",
+  };
+
 
   Widget content() {
   return Stack(
@@ -151,7 +158,10 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PantallaMascota(nombreMascota: mascota, title: ''),
+                        builder: (context) => PantallaMascota(
+                          nombreMascota: mascota, 
+                          imagenMascota: imagenesMascotas[mascota] ?? 'assets/default.png', // Imagen por defecto si no hay una asignada
+                          title: ''),
                       ),
                     );
                   },
