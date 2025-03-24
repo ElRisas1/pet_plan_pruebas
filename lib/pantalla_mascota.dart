@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pet_plan_pruebas/pantallaQR.dart';
+import 'package:pet_plan_pruebas/pantalla_nuevoRecordatorio.dart';
 
 class PantallaMascota extends StatefulWidget {
 
@@ -196,7 +197,7 @@ class _PantallaMascotaState extends State<PantallaMascota> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => PantallaQR(title: "pantalla qr", nombreMascota: '',)),
+                    MaterialPageRoute(builder: (context) => PantallaNuevoRecordatorio(title: 'title')),
                   );
                 },
                 style: ElevatedButton.styleFrom(
