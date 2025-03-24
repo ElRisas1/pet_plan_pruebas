@@ -129,7 +129,7 @@ class _PantallaMascotaState extends State<PantallaMascota> {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent, // Color del botón
+                backgroundColor: Color.fromARGB(255, 255, 161, 79), // Color del botón
                 foregroundColor: Colors.white, // Color del texto
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10), // Bordes redondeados
@@ -201,7 +201,7 @@ class _PantallaMascotaState extends State<PantallaMascota> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent, // Color del botón
+                  backgroundColor: Color.fromARGB(255, 255, 161, 79), // Color del botón
                   foregroundColor: Colors.white, // Color del texto
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10), // Bordes redondeados
