@@ -39,13 +39,27 @@ class PantallaPerfil extends StatelessWidget {
                   ),
                 ],
               ),
-              const CircleAvatar(
-                radius: 50,
-                backgroundImage: AssetImage('assets/profile_pic.png'),
+              Container(
+                  padding: const EdgeInsets.all(4), // Espaciado para el borde
+                  decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 2.5), // Borde blanco
+                  ),
+                  child: ClipOval(
+                  child: Image.asset(
+                  'assets/profile_pic.png',
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
+                ),
               ),
+            ),
+
+              // ClipOval en lugar de CircleAvatar
+             
               const SizedBox(height: 10),
-              const Text('@Chinito', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              const Text('Chinardo ', style: TextStyle(fontSize: 20)),
+              const Text('@perfilprueba1', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const Text('Pedro ', style: TextStyle(fontSize: 20)),
               const SizedBox(height: 10),
               Container(
                 padding: const EdgeInsets.all(16),
@@ -54,7 +68,7 @@ class PantallaPerfil extends StatelessWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Text('Mmmm perlo', textAlign: TextAlign.center),
+                child: const Text('Prueba de texto', textAlign: TextAlign.center),
               ),
               const SizedBox(height: 10),
               ElevatedButton(
@@ -79,6 +93,7 @@ class PantallaPerfil extends StatelessWidget {
     );
   }
 }
+
 
 class PetsSection extends StatelessWidget {
   @override
