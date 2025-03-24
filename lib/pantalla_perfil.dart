@@ -1,199 +1,189 @@
 import 'package:flutter/material.dart';
 import 'package:pet_plan_pruebas/pantalla_main.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+   
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar:AppBar()
-    );
-  }
-}
-
-class PantallaPerfil extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blue[200],
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    // Pantalla de perfil principal
+    class PantallaPerfil extends StatelessWidget {
+      @override
+      Widget build(BuildContext context) {
+        return Scaffold(
+          backgroundColor: Colors.blue[200], // Fondo azul claro
+          appBar: AppBar(title: Text("Pantallaperfil")),
+          body: SafeArea(
+            child: SingleChildScrollView(
+              child: Column(
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: () {},
+                  const SizedBox(height: 20),
+
+                  // Contenedor para la imagen de perfil con borde circular
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2.5),
+                    ),
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/profile_pic.png',
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.edit),
+
+                  const SizedBox(height: 10),
+                  const Text('@perfilprueba1', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const Text('Pedro ', style: TextStyle(fontSize: 20)),
+                  const SizedBox(height: 10),
+
+                  // Contenedor para mostrar información adicional
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    margin: const EdgeInsets.symmetric(horizontal: 40),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text('Prueba de texto', textAlign: TextAlign.center),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  // Botón para mostrar más información (sin funcionalidad por ahora)
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                     onPressed: () {},
+                    child: const Text('Más Info'),
+                  ),
+
+                  const SizedBox(height: 20),
+                  PetsSection(), // Sección de mascotas
+                  const SizedBox(height: 20),
+                  PhotoSection(), // Sección de fotos
+                  const SizedBox(height: 20),
+
+                  // Botón para cerrar sesión (sin funcionalidad por ahora)
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    onPressed: () {},
+                    child: const Text('Cerrar sesión'),
                   ),
                 ],
               ),
-              Container(
-                  padding: const EdgeInsets.all(4), // Espaciado para el borde
-                  decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2.5), // Borde blanco
-                  ),
-                  child: ClipOval(
-                  child: Image.asset(
-                  'assets/profile_pic.png',
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
-                ),
-              ),
             ),
-
-              // ClipOval en lugar de CircleAvatar
-             
-              const SizedBox(height: 10),
-              const Text('@perfilprueba1', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              const Text('Pedro ', style: TextStyle(fontSize: 20)),
-              const SizedBox(height: 10),
-              Container(
-                padding: const EdgeInsets.all(16),
-                margin: const EdgeInsets.symmetric(horizontal: 40),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Text('Prueba de texto', textAlign: TextAlign.center),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                onPressed: () {},
-                child: const Text('More Info'),
-              ),
-              const SizedBox(height: 20),
-              PetsSection(),
-              const SizedBox(height: 20),
-              PhotoSection(),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                onPressed: () {},
-                child: const Text('Log Off'),
-              ),
-            ],
           ),
-        ),
-      ),
-    );
-  }
-}
+        );
+      }
+    }
 
-
-class PetsSection extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        children: [
-          const Text('Your Pets', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    // Sección para mostrar las mascotas
+    class PetsSection extends StatelessWidget {
+      @override
+      Widget build(BuildContext context) {
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
             children: [
-              PetCard(name: 'pelusa', image: 'assets/Perro1.png'),
-              PetCard(name: 'tomusa', image: 'assets/gatobonito.jpg'),
-              AddPetCard(),
+              const Text('Tus mascotas', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+
+              // Fila para mostrar mascotas y añadir una nueva
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  PetCard(name: 'pelusa', image: 'assets/Perro1.png'),
+                  PetCard(name: 'tomusa', image: 'assets/gatobonito.jpg'),
+                  AddPetCard(), // Tarjeta para añadir una nueva mascota
+                ],
+              ),
             ],
           ),
-        ],
-      ),
-    );
-  }
-}
+        );
+      }
+    }
 
-class PetCard extends StatelessWidget {
-  final String name;
-  final String image;
+    // Componente para mostrar información de una mascota
+    class PetCard extends StatelessWidget {
+      final String name;
+      final String image;
 
-  const PetCard({required this.name, required this.image});
+      const PetCard({required this.name, required this.image});
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 30,
-          backgroundImage: AssetImage(image),
-        ),
-        const SizedBox(height: 5),
-        Text(name),
-      ],
-    );
-  }
-}
+      @override
+      Widget build(BuildContext context) {
+        return Column(
+          children: [
+            CircleAvatar(
+              radius: 30,
+              backgroundImage: AssetImage(image),
+            ),
+            const SizedBox(height: 5),
+            Text(name),
+          ],
+        );
+      }
+    }
 
-class AddPetCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 30,
-          backgroundColor: Colors.blue[100],
-          child: const Icon(Icons.add, color: Colors.green, size: 30),
-        ),
-        const SizedBox(height: 5),
-        const Text('Add new Pet'),
-      ],
-    );
-  }
-}
+    // Tarjeta para añadir una nueva mascota
+    class AddPetCard extends StatelessWidget {
+      @override
+      Widget build(BuildContext context) {
+        return Column(
+          children: [
+            CircleAvatar(
+              radius: 30,
+              backgroundColor: Colors.blue[100],
+              child: const Icon(Icons.add, color: Colors.green, size: 30),
+            ),
+            const SizedBox(height: 5),
+            const Text('Añade una mascota'),
+          ],
+        );
+      }
+    }
 
-class PhotoSection extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: const [
-              Icon(Icons.add_a_photo, color: Colors.blue),
-              SizedBox(width: 10),
-              Text('Add a photo'),
-            ],
+    // Sección para mostrar y añadir fotos
+    class PhotoSection extends StatelessWidget {
+      @override
+      Widget build(BuildContext context) {
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
           ),
-          const SizedBox(height: 10),
-          Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.asset('assets/Hamster.png', width: 80, height: 80, fit: BoxFit.cover),
-              const SizedBox(width: 10),
-              Image.asset('assets/images.png', width: 80, height: 80, fit: BoxFit.cover),
-              const SizedBox(width: 10),
-              Image.asset('assets/GatoEgipcio.png', width: 80, height: 80, fit: BoxFit.cover),
+              Row(
+                children: const [
+                  Icon(Icons.add_a_photo, color: Colors.blue),
+                  SizedBox(width: 10),
+                  Text('Añade una foto'),
+                ],
+              ),
+              const SizedBox(height: 10),
+
+              // Fila para mostrar imágenes
+              Row(
+                children: [
+                  Image.asset('assets/Hamster.png', width: 80, height: 80, fit: BoxFit.cover),
+                  const SizedBox(width: 10),
+                  Image.asset('assets/images.png', width: 80, height: 80, fit: BoxFit.cover),
+                  const SizedBox(width: 10),
+                  Image.asset('assets/GatoEgipcio.png', width: 80, height: 80, fit: BoxFit.cover),
+                ],
+              ),
             ],
           ),
-        ],
-      ),
-    );
-  }
-}
-
+        );
+      }
+    }
