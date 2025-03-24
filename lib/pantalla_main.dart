@@ -161,7 +161,11 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         builder: (context) => PantallaMascota(
                           nombreMascota: mascota, 
                           imagenMascota: imagenesMascotas[mascota] ?? 'assets/default.png', // Imagen por defecto si no hay una asignada
-                          title: ''),
+                          recordatorios: [
+                            "Saca a $mascota a pasear",
+                            "Dale la pastilla a $mascota",
+                            "Le toca veterinario a $mascota"
+                          ],),
                       ),
                     );
                   },
