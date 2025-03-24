@@ -23,7 +23,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
 
   //VARIABLES
 
-   //Lista de mascotas
+   //Lista de mascotas para el carrusel
   final List<String> mascotas = ["Firulais", "Luna", "Max"];
 
   final String nombrePrueba = "chamaquito"; //nombre de prueba para el usuario
@@ -111,7 +111,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PantallaPerfil(nombreUser: '', title: ''),
+                    builder: (context) => PantallaPerfil(),
                   ),
                 );
               },
