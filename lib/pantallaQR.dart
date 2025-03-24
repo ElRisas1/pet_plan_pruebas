@@ -13,21 +13,19 @@ class PantallaQR extends StatefulWidget {
 }
 
 class _PantallaQRState extends State<PantallaQR> {
-  @override
+
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("QR ${widget.nombreMascota}"),
-       // backgroundColor: Colors.blue, // Cambia el color si quieres
-      ),
       backgroundColor: const Color.fromARGB(248, 238, 220, 138),
-      body: contenido(),
-    );
-  }
-
-  Widget contenido(){
-    return Stack(
-      
+      appBar: AppBar(title: Text("Nuevo recordatorio")),
+      body: Center(
+        child: Text(
+          "Aquí va el QR",
+          style: TextStyle(fontSize: 25),
+        ),
+      ),
     );
   }
 }
+  

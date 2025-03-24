@@ -86,7 +86,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
             top: 50,
             left: 15,
             child: DropdownButton<String>(
-              value: selectedItem, // Puede ser nulo
+              value: selectedItem, // Puede ser nulo, o sea no hay nada seleccionado.
               hint: Text("Selecciona"), // Texto cuando no hay selección
               items: menu.map((item) => DropdownMenuItem<String>(
                 value: item,
@@ -209,7 +209,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
 
           // LISTA DE RECORDATORIOS //
           Positioned(
-            top: 500, left: 49, right: 49,
+            top: 515, left: 49, right: 49,
             child: Container(
               height: 200,
               width: 300,

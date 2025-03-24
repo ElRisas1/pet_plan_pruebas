@@ -16,7 +16,7 @@ class _PantallaNuevoRecordatorioState extends State<PantallaNuevoRecordatorio> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(248, 152, 184, 239),
+      backgroundColor: const Color.fromARGB(248, 238, 220, 138),
       appBar: AppBar(title: Text("Nuevo recordatorio")),
       body: Center(
         child: Text(
