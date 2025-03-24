@@ -14,18 +14,24 @@ class PantallaPerfil extends StatefulWidget {
 class _PantallaPerfilState extends State<PantallaPerfil> {
 
   
-  @override
+   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(248, 152, 184, 239),
-      appBar: AppBar(title: Text("Nombre Usuario")), 
-     // backgroundColor: const Color.fromARGB(248, 238, 220, 138),
-      body: Center(
-        child: Text(
-          "Perfil Usuario",
-          style: TextStyle(fontSize: 25),
+    return MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Transform.translate(
+            offset: Offset(0, -200), // Mueve la imagen 50 px hacia arriba
+            child:ClipOval(
+            child: Image.asset(
+              ("assets/profile_pic.png"),
+              width: 200,
+              height: 200,
+              fit: BoxFit.cover,
+            ),
+          ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

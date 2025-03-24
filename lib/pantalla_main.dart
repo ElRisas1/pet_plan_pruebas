@@ -117,7 +117,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
               },
               child: ClipOval( // Hace la imagen redonda
                 child: Image.asset(
-                  'assets/logolorena.png', 
+                  'assets/profile_pic.png', 
                   width: 80, 
                   height: 80,
                   fit: BoxFit.cover, // Ajusta la imagen al círculo
