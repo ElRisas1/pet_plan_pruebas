@@ -37,7 +37,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
   String? selectedItem = "Menu";  //item seleccionado, empieza siendo 'menu'
 
   
-  /// Void para la gestionar las selecciones
+  /// Void para gestionar las selecciones
   void onMenuSelected(String? item) {
       if (item == null) return; // si es null
 
@@ -63,6 +63,13 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
       body: content(),
     );
   }
+
+  // MAPA DE MASCOTAS E IMAGENES //
+  Map<String, String> imagenesMascotas = {
+    "Firulais": "assets/Perro1.png",
+    "Luna": "assets/gatobonito.jpg",
+    "Max": "assets/GatoEgipcio.png",
+  };
 
 
   Widget content() {
@@ -151,7 +158,14 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PantallaMascota(nombreMascota: mascota, title: ''),
+                        builder: (context) => PantallaMascota(
+                          nombreMascota: mascota, 
+                          imagenMascota: imagenesMascotas[mascota] ?? 'assets/default.png', // Imagen por defecto si no hay una asignada
+                          recordatorios: [
+                            "Saca a $mascota a pasear",
+                            "Dale la pastilla a $mascota",
+                            "Le toca veterinario a $mascota"
+                          ],),
                       ),
                     );
                   },
