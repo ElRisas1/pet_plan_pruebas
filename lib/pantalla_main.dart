@@ -37,7 +37,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
   String? selectedItem = "Menu";  //item seleccionado, empieza siendo 'menu'
 
   
-  /// Void para la gestionar las selecciones
+  /// Void para gestionar las selecciones
   void onMenuSelected(String? item) {
       if (item == null) return; // si es null
 
