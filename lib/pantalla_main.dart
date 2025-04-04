@@ -6,6 +6,7 @@ import 'package:pet_plan_pruebas/pantalla_ayuda.dart';
 import 'package:pet_plan_pruebas/pantalla_chatia.dart';
 import 'package:pet_plan_pruebas/pantalla_mascota.dart';
 import 'package:pet_plan_pruebas/pantalla_perfil.dart';
+import 'package:pet_plan_pruebas/pantalla_recordatorio.dart';
 
 
 
@@ -21,20 +22,16 @@ class PantallaPrincipal extends StatefulWidget {
 
 class _PantallaPrincipalState extends State<PantallaPrincipal> {
 
-  //VARIABLES
-
-   //Lista de mascotas para el carrusel
-  final List<String> mascotas = ["Firulais", "Luna", "Max"];
-
+  //VARIABLES//
+  String? selectedItem = "Menu";  //item seleccionado, empieza siendo 'menu'
   final String nombrePrueba = "chamaquito"; //nombre de prueba para el usuario
 
-  //lista de recordatorios de prueba
-  List<String> recordatorios = ["saca a firulais a pasear", "Dale la pastilla a Luna", "Hoy le toca veterinario a Max" ];
+  // Listas //
+  final List<String> mascotas = ["Firulais", "Luna", "Max"]; //Lista de mascotas para el carrusel
 
-  //lista de items para el dropdown menu
-  List<String> menu = ["Menu","Ajustes", "Ayuda"];
+  List<String> recordatorios = ["saca a firulais a pasear", "Dale la pastilla a Luna", "Hoy le toca veterinario a Max" ];  //lista de recordatorios de prueba
 
-  String? selectedItem = "Menu";  //item seleccionado, empieza siendo 'menu'
+  List<String> menu = ["Menu","Ajustes", "Ayuda"]; //lista de items para el dropdown menu
 
   
   /// Void para gestionar las selecciones
@@ -73,6 +70,9 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
 
 
   Widget content() {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
   return Stack(
     children: [
       // AppBar
@@ -83,8 +83,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
 
       // DROP DOWN MENU //
       Positioned(
-            top: 50,
-            left: 15,
+            top: screenHeight * 0.06,
+            left: screenWidth * 0.05,
             child: DropdownButton<String>(
               value: selectedItem, // Puede ser nulo, o sea no hay nada seleccionado.
               hint: Text("Selecciona"), // Texto cuando no hay selección
@@ -98,8 +98,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
     
       // IMAGEN DE PERFIL - Ubicación en la parte superior derecha
       Positioned(
-        top: 50, 
-        right: 15, 
+        top: screenHeight * 0.06,
+        right: screenWidth * 0.05, 
         child: Material(
           elevation: 8, // Agrega sombra al botón
           shape: const CircleBorder(), // Mantiene la forma circular
@@ -125,8 +125,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
               child: ClipOval( // Hace la imagen redonda
                 child: Image.asset(
                   'assets/profile_pic.png', 
-                  width: 80, 
-                  height: 80,
+                  width: screenWidth * 0.2,
+                  height: screenWidth * 0.2,
                   fit: BoxFit.cover, // Ajusta la imagen al círculo
                 ),
               ),
@@ -136,21 +136,25 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
       ),
           
           // TITULO MIS MASCOTAS //
-          Padding(
-            padding: const EdgeInsets.only(top: 160, left: 98 ), // Ajusta el espacio superior para evitar que se solape con el AppBar
-            child: const Text(
-              "Mis Mascotas", 
-              style: TextStyle(
-                fontSize: 35,
-                color: Color.fromARGB(218, 0, 0, 0),
-                fontWeight: FontWeight.bold, // Puedes cambiar el peso para que se vea más destacado
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: EdgeInsets.only(top: screenHeight * 0.2),
+              child: const Text(
+                "Mis Mascotas",
+                style: TextStyle(
+                  fontSize: 35,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
           
           // CONTENEDOR CON EL CARRUSEL DE MASCOTAS //
-          Container(
-            margin: const EdgeInsets.only(left: 15, top: 230, bottom: 20),
+          Positioned(
+            top: screenHeight * 0.28,
+            left: screenWidth * 0.05,
+            right: screenWidth * 0.05,
             child: CarouselSlider(
               items: mascotas.map((mascota) {
                 return GestureDetector( //esto detecta que item se presiona y asi nos manda a su pantalla correspondiente
@@ -172,8 +176,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
 
                   // ITEMS DEL CARRUSEL // 
                   child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    margin: const EdgeInsets.symmetric(horizontal: 7),
+                    margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
                     decoration: BoxDecoration(
                       color: const Color.fromARGB(255, 152, 184, 239),
                       borderRadius: BorderRadius.circular(10),
@@ -188,31 +191,34 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                 );
               }).toList(),
               options: CarouselOptions(
-                height: 160,
+                height: screenHeight * 0.22,
                 enlargeCenterPage: true,
               ),
             ),
           ),
 
           // TITULO RECORDATORIOS //
-          Padding(
-            padding: const EdgeInsets.only(top: 450, left: 115 ), // Ajusta el espacio superior para evitar que se solape con el AppBar
-            child: const Text(
-              "Recordatorios", 
-              style: TextStyle(
-                fontSize: 28,
-                color: Color.fromARGB(218, 0, 0, 0),
-                fontWeight: FontWeight.bold, // Puedes cambiar el peso para que se vea más destacado
+          Align(
+            alignment: Alignment.center,
+            child: Padding(
+              padding: EdgeInsets.only(top: screenHeight * 0.55),
+              child: const Text(
+                "Recordatorios",
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),  
+          ),
 
           // LISTA DE RECORDATORIOS //
           Positioned(
-            top: 515, left: 49, right: 49,
+            top: screenHeight * 0.62,
+            left: screenWidth * 0.1,
+            right: screenWidth * 0.1,
             child: Container(
-              height: 200,
-              width: 300,
+              height: screenHeight * 0.25,
               decoration: BoxDecoration(
                 color: Colors.white, //fondo blanco de la lista
                 borderRadius: BorderRadius.circular(10), //bordes redondeados
@@ -223,11 +229,24 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                   )
                 ]
               ),
-              child: ListView.builder(
+              child: ListView.separated(
               itemCount: recordatorios.length,
+              separatorBuilder: (context, index) => Divider(),
               itemBuilder:(context, index) {
                 return ListTile(
-                  title: Text(recordatorios[index]),
+                  leading: Icon(Icons.alarm, color: Colors.blueAccent), // Ícono de alarma
+                  title: Text(recordatorios[index],
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                  trailing: Icon(Icons.arrow_forward_ios, size: 18, color:Colors.grey),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PantallaRecordatorio(recordatorio: recordatorios[index])
+                      )
+                    );
+                  },
                 );
               },),
             ),
@@ -235,7 +254,9 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
 
           // BOTON CHAT IA //
           Positioned(
-            top: 780, left: 100, right: 100,
+            bottom: screenHeight * 0.05,
+            left: screenWidth * 0.2,
+            right: screenWidth * 0.2,
             //boton
             child: ElevatedButton(
               onPressed: () {
@@ -250,9 +271,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10), // Bordes redondeados
                 ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 45, 
-                  vertical: 20), // Tamaño del botón
+                padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02), // Tamaño del botón
                 elevation: 8, // Sombra para el botón
               ),
               child: const Text(
