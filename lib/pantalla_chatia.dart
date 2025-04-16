@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:grouped_list/grouped_list.dart';
 //import 'variables_globales.dart';
 import 'package:pet_plan_pruebas/src/widgets/custom_button.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:pet_plan_pruebas/variables_globales.dart';
 
 class PantallaChatIA extends StatefulWidget {
   const PantallaChatIA({super.key, required this.title});
@@ -19,6 +21,13 @@ class _PantallaChatIAState extends State<PantallaChatIA> {
   late TextEditingController _campoPrompt;
   String respuesta = "";
 
+  //Añadiendo List tipo mensajes
+  List<Mensaje> mensajes = [
+    Mensaje(
+     texto: "texto", 
+     date: DateTime.now().subtract(Duration(minutes: 1)),
+     isSentByMe: false)
+  ];
 
   @override
   void initState(){
@@ -57,34 +66,44 @@ class _PantallaChatIAState extends State<PantallaChatIA> {
               const Text("Habla con nuestra IA", style: TextStyle(fontSize: 37, color: Color.fromARGB(255, 0, 0, 0))),
               Padding(padding: EdgeInsets.all(20)),
 
-              SizedBox(
+              SizedBox( //FoTo logo roñosa
                 height: 200.0,
                 width: 200.0,
-                child: Image.asset("assets/logoLorena.png")
-
+                child: Image.asset("assets/logoLorena.png")  
               ),
 
-              
-              Padding(
+
+              Padding(padding: EdgeInsets.all(25), //RESPUESTA IA
+                child: Text("La respuesta es: $respuesta", style: TextStyle(fontSize: 20),)
+              ),
+             
+              Expanded(
+                child: GroupedListView<Mensaje, DateTime>(
+                padding: const EdgeInsets.all(8),
+                elements: mensajes,
+                groupBy: (mensaje) => DateTime(2025),
+                groupHeaderBuilder: (Mensaje mensaje) => SizedBox(),
+                itemBuilder: (context, Mensaje mensaje) => Container(),
+
+                )
+              ),
+
+              Container(
                 padding: const EdgeInsets.all(13),
-                child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
+                color: Colors.grey.shade300,
+                child: 
+                TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
                   controller: _campoPrompt,  //Controlador para identificarlo
                   decoration: const InputDecoration( 
                     border: OutlineInputBorder(),
                     labelText: "Introduce lo que quieras saber",
                     labelStyle: TextStyle(fontSize: 18),
-                    ),
-                    
+                    ),   
                 )
               ),
 
 
-              Padding(padding: EdgeInsets.all(25),
-                child: Text("La respuesta es: $respuesta", style: TextStyle(fontSize: 20),)
-                ),
-              
-
-              Padding(padding: EdgeInsets.all(20)),
+              Padding(padding: EdgeInsets.all(10)),
               Container(
                 margin:EdgeInsets.only(left: 100, right: 100), //Esto lo separa del margen por la derecha y la izquierda
                 child:

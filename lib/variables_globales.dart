@@ -8,8 +8,18 @@ class VariablesGlobales {
   static List <String> loginPassword = [];
 
   static List <ConstructorRegistro> usuariosRegistrados = [];
+}
 
-  
+class Mensaje {
+  final String texto;
+  final DateTime date;
+  final bool isSentByMe;
+
+  const Mensaje ({
+    required this.texto,
+    required this.date,
+    required this.isSentByMe,
+  });
 }
 
 
