@@ -8,17 +8,41 @@ class PantallaRecordatorio extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Detalle del Recordatorio")),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Text(
-            recordatorio,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ),
+      backgroundColor: const Color.fromARGB(248, 152, 184, 239), // Fondo azul claro
+      body: content(),
     );
+  }
+
+  Widget content() {
+    //double screenWidth = MediaQuery.of(context).size.width;
+    //double screenHeight = MediaQuery.of(context).size.height;
+    
+    return Stack(
+      children: [
+        AppBar(
+          title: Text("Recordatorio"),
+          backgroundColor: Color.fromARGB(248, 238, 220, 138), // Fondo azul claro
+        ),
+        Positioned(
+          top: 100,
+          left: 25,
+          right: 25,
+          child: Container(
+            height: 750,
+              decoration: BoxDecoration(
+                color: Colors.white, //fondo blanco de la lista
+                borderRadius: BorderRadius.circular(10), //bordes redondeados
+                 boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    offset: Offset(0, 2),
+                  )
+                ]
+              ) 
+          ),
+        )
+      ],
+    );
+
   }
 }
