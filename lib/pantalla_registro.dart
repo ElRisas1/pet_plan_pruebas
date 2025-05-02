@@ -31,6 +31,9 @@ final _supabaseAuth = Supabase.instance.client.auth;
   final _campoUserNombreReg = TextEditingController();
   final  _campoUserTelefReg = TextEditingController();
   final _campoUserPassReg = TextEditingController();
+  final _campoUserEdadReg = TextEditingController();
+  final _campoUserCpReg = TextEditingController();
+  final _campoUserDireccionReg = TextEditingController();
   
 
   //late DropdownMenuItem<String> itemsMenu;
@@ -44,6 +47,9 @@ final _supabaseAuth = Supabase.instance.client.auth;
     _campoUserEmailReg.dispose();
     _campoUserTelefReg.dispose();
     _campoUserPassReg.dispose();
+    _campoUserEdadReg.dispose();
+    _campoUserCpReg.dispose();
+    _campoUserDireccionReg.dispose();
     //_campoUserEdadReg = DropdownButton();
   }
 
@@ -129,6 +135,44 @@ final _supabaseAuth = Supabase.instance.client.auth;
                     labelStyle: TextStyle(fontSize: 18),
                     ),
               )),
+
+              Padding(padding: EdgeInsets.all(10)),
+              Padding(
+                padding: const EdgeInsets.all(13),
+                child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
+                  controller: _campoUserEdadReg, //Controlador para identificarlo
+                  keyboardType: TextInputType.numberWithOptions(), //Solo ofrece teclado numerico
+                  decoration: const InputDecoration( 
+                    border: OutlineInputBorder(),
+                    labelText: "Edad",
+                    labelStyle: TextStyle(fontSize: 18),
+                    ),
+              )),
+
+              Padding(padding: EdgeInsets.all(10)),
+              Padding(
+                padding: const EdgeInsets.all(13),
+                child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
+                  controller: _campoUserCpReg, //Controlador para identificarlo
+                  keyboardType: TextInputType.numberWithOptions(), //Solo ofrece teclado numerico
+                  decoration: const InputDecoration( 
+                    border: OutlineInputBorder(),
+                    labelText: "Código Postal",
+                    labelStyle: TextStyle(fontSize: 18),
+                    ),
+              )),
+
+              Padding(padding: EdgeInsets.all(10)),
+              Padding(
+                padding: const EdgeInsets.all(13),
+                child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
+                  controller: _campoUserDireccionReg,  //Controlador para identificarlo
+                  decoration: const InputDecoration( 
+                    border: OutlineInputBorder(),
+                    labelText: "Dirección",
+                    labelStyle: TextStyle(fontSize: 18),
+                    ),
+                )),
 
                 Padding(padding: EdgeInsets.all(10)),
               Padding(
