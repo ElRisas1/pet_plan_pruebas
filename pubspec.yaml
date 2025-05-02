@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  intl: ^0.18.1
   carousel_slider: ^5.0.0
   google_generative_ai: ^0.4.6
   supabase_flutter: ^2.8.4
