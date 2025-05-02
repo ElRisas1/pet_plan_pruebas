@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
+import 'pantalla_nuevoRecordatorio.dart';
 
 class PantallaRecordatorio extends StatelessWidget {
   final String recordatorio;
@@ -8,20 +9,17 @@ class PantallaRecordatorio extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(248, 152, 184, 239), // Fondo azul claro
-      body: content(),
+      backgroundColor: const Color.fromARGB(248, 152, 184, 239),
+      body: content(context),
     );
   }
 
-  Widget content() {
-    //double screenWidth = MediaQuery.of(context).size.width;
-    //double screenHeight = MediaQuery.of(context).size.height;
-    
+  Widget content(BuildContext context) {
     return Stack(
       children: [
         AppBar(
           title: Text("Recordatorio"),
-          backgroundColor: Color.fromARGB(248, 238, 220, 138), // Fondo azul claro
+          backgroundColor: Color.fromARGB(248, 238, 220, 138),
         ),
         Positioned(
           top: 100,
@@ -29,20 +27,40 @@ class PantallaRecordatorio extends StatelessWidget {
           right: 25,
           child: Container(
             height: 750,
-              decoration: BoxDecoration(
-                color: Colors.white, //fondo blanco de la lista
-                borderRadius: BorderRadius.circular(10), //bordes redondeados
-                 boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    offset: Offset(0, 2),
-                  )
-                ]
-              ) 
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
           ),
-        )
+        ),
+        Positioned(
+          bottom: 30,
+          right: 30,
+          child: ElevatedButton(
+            onPressed: () {
+              // Cambiar de pantalla
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PantallaNuevoRecordatorio(title: "Nuevo recordatorio"),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.amber, // Color de fondo del botón
+              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+            ),
+            child: Text("Crear recordatorio", style: TextStyle(fontSize: 16)),
+          ),
+        ),
       ],
     );
-
   }
 }
+
