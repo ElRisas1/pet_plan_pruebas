@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pet_plan_pruebas/pantalla_login.dart';
+import 'package:pet_plan_pruebas/pantalla_main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 const supabaseUrl = 'https://fzukoqnipqclppkpotbc.supabase.co';
@@ -18,7 +19,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'PetPlan',
-      home: PantallaLogin(title: "Pantalla Login"),
+      home: PantallaPrincipal(title: "Pantalla p")
     );
   }
 }
