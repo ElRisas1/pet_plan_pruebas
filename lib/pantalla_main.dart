@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-// pantallas
+// Pantallas
 import 'package:pet_plan_pruebas/pantalla_ajustes.dart';
 import 'package:pet_plan_pruebas/pantalla_ayuda.dart';
 import 'package:pet_plan_pruebas/pantalla_chatia.dart';
@@ -22,7 +22,7 @@ class PantallaPrincipal extends StatefulWidget {
 
 class _PantallaPrincipalState extends State<PantallaPrincipal> {
 
-  //VARIABLES//
+  // VARIABLES
   String? selectedItem = "Menu";  //item seleccionado, empieza siendo 'menu'
   final String nombrePrueba = "chamaquito"; //nombre de prueba para el usuario
 
