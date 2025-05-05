@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+//Pantallas
 import 'package:pet_plan_pruebas/pantallaQR.dart';
 import 'package:pet_plan_pruebas/pantalla_recordatorio.dart';
 import 'package:pet_plan_pruebas/pantalla_nuevoRecordatorio.dart';
@@ -23,7 +24,7 @@ class PantallaMascota extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(nombreMascota),
-        backgroundColor: Colors.white,
+        backgroundColor: const Color.fromARGB(248, 144, 177, 235),
       ),
       body: Container(
         color: const Color.fromARGB(248, 144, 177, 235),
