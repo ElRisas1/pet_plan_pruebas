@@ -70,7 +70,7 @@ class _PantallaLoginState extends State<PantallaLogin> {
         MaterialPageRoute(builder: (context) => const PantallaPrincipal(title: "PantallaPrincipal")),
         );
     }
-  } on AuthException catch(e) {
+  } on AuthException {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("Error:Verifica tu correo o contraseña."))

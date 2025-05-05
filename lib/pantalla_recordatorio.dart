@@ -6,7 +6,7 @@ import 'pantalla_nuevoRecordatorio.dart';
 class PantallaRecordatorio extends StatefulWidget {
   final String recordatorio;
 
-  PantallaRecordatorio({required this.recordatorio});
+  const PantallaRecordatorio({super.key, required this.recordatorio});
 
   @override
   State<PantallaRecordatorio> createState() => _PantallaRecordatorioState();

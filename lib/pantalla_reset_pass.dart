@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
  import 'package:pet_plan_pruebas/pantalla_login.dart';
- import 'constructor_registro.dart';
  import 'package:pet_plan_pruebas/src/widgets/custom_button.dart';
  import 'variables_globales.dart';
  

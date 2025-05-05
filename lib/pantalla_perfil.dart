@@ -5,6 +5,8 @@ import 'package:pet_plan_pruebas/pantalla_main.dart';
 
     // Pantalla de perfil principal
     class PantallaPerfil extends StatelessWidget {
+  const PantallaPerfil({super.key});
+
       @override
       Widget build(BuildContext context) {
         return Scaffold(
@@ -80,6 +82,8 @@ import 'package:pet_plan_pruebas/pantalla_main.dart';
 
     // Sección para mostrar las mascotas
     class PetsSection extends StatelessWidget {
+  const PetsSection({super.key});
+
       @override
       Widget build(BuildContext context) {
         return Container(
@@ -114,7 +118,7 @@ import 'package:pet_plan_pruebas/pantalla_main.dart';
       final String name;
       final String image;
 
-      const PetCard({required this.name, required this.image});
+      const PetCard({super.key, required this.name, required this.image});
 
       @override
       Widget build(BuildContext context) {
@@ -133,6 +137,8 @@ import 'package:pet_plan_pruebas/pantalla_main.dart';
 
     // Tarjeta para añadir una nueva mascota
     class AddPetCard extends StatelessWidget {
+  const AddPetCard({super.key});
+
       @override
       Widget build(BuildContext context) {
         return Column(
@@ -151,6 +157,8 @@ import 'package:pet_plan_pruebas/pantalla_main.dart';
 
     // Sección para mostrar y añadir fotos
     class PhotoSection extends StatelessWidget {
+  const PhotoSection({super.key});
+
       @override
       Widget build(BuildContext context) {
         return Container(
