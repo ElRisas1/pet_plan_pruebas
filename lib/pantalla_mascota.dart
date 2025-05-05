@@ -1,225 +1,197 @@
 import 'package:flutter/material.dart';
+//Pantallas
 import 'package:pet_plan_pruebas/pantallaQR.dart';
+import 'package:pet_plan_pruebas/pantalla_recordatorio.dart';
 import 'package:pet_plan_pruebas/pantalla_nuevoRecordatorio.dart';
 
-class PantallaMascota extends StatefulWidget {
-
-  // VARIABLES //
+class PantallaMascota extends StatelessWidget {
   final String nombreMascota;
   final String imagenMascota;
+  final List<String> recordatorios;
 
-  //lista de recordatorios de prueba
- final List<String> recordatorios;
-
-
-  // Constructor
-  const PantallaMascota({super.key, required this.nombreMascota, required this.imagenMascota, required this.recordatorios,});
-
-  @override
-  _PantallaMascotaState createState() => _PantallaMascotaState();
-}
-
-class _PantallaMascotaState extends State<PantallaMascota> {
+  PantallaMascota({
+    super.key,
+    required this.nombreMascota,
+    required this.imagenMascota,
+  }) : recordatorios = [
+    "Saca a Firulais a pasear",
+    "Dale la pastilla a Luna",
+    "Hoy le toca veterinario a Max"
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Appbar
-      appBar: AppBar( 
-        title: Text(widget.nombreMascota),
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255), // Color del AppBar
+      appBar: AppBar(
+        title: Text(nombreMascota),
+        backgroundColor: const Color.fromARGB(248, 144, 177, 235),
       ),
-
       body: Container(
-        width: double.infinity,  // Asegura que el Container cubra toda la pantalla
-        height: double.infinity, // Asegura que el Container cubra toda la pantalla
-        color: const Color.fromARGB(248, 144, 177, 235), // Fondo de la pantalla
-        child: contenido(),
+        color: const Color.fromARGB(248, 144, 177, 235),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              _titulo(nombreMascota),
+              const SizedBox(height: 20),
+              _imagenPerfil(imagenMascota),
+              const SizedBox(height: 30),
+              _infoMascota(nombreMascota),
+              const SizedBox(height: 20),
+              _botonQR(context),
+              const SizedBox(height: 30),
+              _tituloSeccion("Recordatorios"),
+              const SizedBox(height: 10),
+              _listaRecordatorios(context, recordatorios),
+              const SizedBox(height: 20),
+              _botonNuevoRecordatorio(context),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget contenido(){
-    return Stack(
-      children: [
-        // TITULO DE LA PANTALLA
-        Padding(
-          padding: const EdgeInsets.only(top: 25, left: 168 ), // esto ajusta el espacio superior para evitar que se solape con el AppBar
-          child: Text(
-                widget.nombreMascota,
-                style: const TextStyle(
-                  fontSize: 30,
-                  color: Color.fromARGB(218, 0, 0, 0),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+  Widget _titulo(String nombre) {
+    return Text(
+      nombre,
+      style: const TextStyle(
+        fontSize: 30,
+        fontWeight: FontWeight.bold,
+        color: Colors.black87,
+      ),
+    );
+  }
+
+  Widget _imagenPerfil(String imagen) {
+    return Material(
+      elevation: 8,
+      shape: const CircleBorder(),
+      clipBehavior: Clip.antiAlias,
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.white, width: 2.5),
         ),
-      
-       // IMAGEN DE PERFIL MASCOTA - CENTRADA
-        Positioned(
-            top: 100, left: 160, 
-            child: Material(
-              elevation: 8, 
-              shape: const CircleBorder(), 
-              clipBehavior: Clip.antiAlias, 
-
-              child: Container(
-                padding: const EdgeInsets.all(4), // Espaciado para el borde
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle, // Hace que el borde sea redondo
-                  border: Border.all(color: Colors.white, width: 2.5), // Borde blanco
-                ),
-                child: InkWell(
-                  splashColor: Colors.black26, // Efecto al tocar
-                  // onTap
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundImage: AssetImage(widget.imagenMascota), // pone la imagen correspondiente
-                  ),
-                  ),
-                ),
-              ),
+        child: CircleAvatar(
+          radius: 50,
+          backgroundImage: AssetImage(imagen),
         ),
+      ),
+    );
+  }
 
-        // TITULO INFORMACIÓN //
-        Padding(
-          padding: const EdgeInsets.only(top: 245, left: 51),
-          child: Text(
-            "Información de ${widget.nombreMascota}",
-            style: const TextStyle(
-              fontSize: 30,
-              color: Color.fromARGB(218, 0, 0, 0),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
+  Widget _infoMascota(String nombre) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 6,
+            offset: Offset(0, 3),
+          )
+        ],
+      ),
+      child: Text(
+        "Aquí irá la información de $nombre",
+        style: const TextStyle(fontSize: 18),
+      ),
+    );
+  }
 
-       // CAJA DE INFORMACIÓN DE LA MASCOTA //
-        Positioned(
-          top: 300, left: 36, right: 36, // Ajusta la posición
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 6,
-                  offset: Offset(0, 3),
-                )
-              ],
-            ),
-            child: Text(
-              "Aquí irá la información de ${widget.nombreMascota}", // Ejemplo de contenido
-              style: TextStyle(fontSize: 18),
-            ),
-          ),
-        ),
+  Widget _botonQR(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        Navigator.push(context,
+          MaterialPageRoute(builder: (context) => PantallaQR(title: "Pantalla QR", nombreMascota: nombreMascota)),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color.fromARGB(255, 255, 161, 79),
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 20),
+        elevation: 8,
+      ),
+      child: const Text(
+        "QR",
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
 
-        // BOTON QR //
-        Positioned(
-            top: 390, left: 100, right: 100,
-            //boton
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => PantallaQR(title: "pantalla qr", nombreMascota: '',)),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color.fromARGB(255, 255, 161, 79), // Color del botón
-                foregroundColor: Colors.white, // Color del texto
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10), // Bordes redondeados
+  Widget _tituloSeccion(String titulo) {
+    return Text(
+      titulo,
+      style: const TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.bold,
+        color: Colors.black87,
+      ),
+    );
+  }
+
+  Widget _listaRecordatorios(BuildContext context, List<String> recordatorios) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: const [
+          BoxShadow(color: Colors.black26, offset: Offset(0, 2)),
+        ],
+      ),
+      child: ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: recordatorios.length,
+        separatorBuilder: (_, __) => const Divider(),
+        itemBuilder: (context, index) {
+          return ListTile(
+            leading: const Icon(Icons.alarm, color: Colors.blueAccent),
+            title: Text(
+              recordatorios[index],
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PantallaRecordatorio(recordatorio: recordatorios[index]),
                 ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 45, 
-                  vertical: 20), // Tamaño del botón
-                elevation: 8, // Sombra para el botón
-              ),
-              child: const Text(
-                "QR",
-                style: TextStyle(
-                  fontSize: 20, 
-                  fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
 
-          // TITULO RECORDATORIOS //
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 480, left: 115 ), // Ajusta el espacio superior para evitar que se solape con el AppBar
-            child: const Text(
-              "Recordatorios", 
-              style: TextStyle(
-                fontSize: 28,
-                color: Color.fromARGB(218, 0, 0, 0),
-                fontWeight: FontWeight.bold, // Puedes cambiar el peso para que se vea más destacado
-              ),
-            ),
-          ),  
-
-          // LISTA DE RECORDATORIOS //
-          Positioned(
-            top: 530, left: 49, right: 49,
-            child: Container(
-              height: 200,
-              width: 300,
-              decoration: BoxDecoration(
-                color: Colors.white, //fondo blanco de la lista
-                borderRadius: BorderRadius.circular(10), //bordes redondeados
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    offset: Offset(0, 2),
-                  )
-                ]
-              ),
-              child: ListView.builder(
-                itemCount: widget.recordatorios.length,
-                itemBuilder:(context, index) {
-                  return ListTile(
-                    title: Text(widget.recordatorios[index]),
-                  );
-                },
-              ),
-            ),
-          ),
-
-           // BOTON AGREGAR RECORDATORIO //
-          Positioned(
-              top: 750, left: 74, 
-              //boton
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => PantallaNuevoRecordatorio(title: 'title')),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 255, 161, 79), // Color del botón
-                  foregroundColor: Colors.white, // Color del texto
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10), // Bordes redondeados
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 45, 
-                    vertical: 20), // Tamaño del botón
-                  elevation: 8, // Sombra para el botón
-                ),
-                child: const Text(
-                  "Nuevo Recordatorio",
-                  style: TextStyle(
-                    fontSize: 20, 
-                    fontWeight: FontWeight.bold),
-                ),
-              ),
-          ),
-      ],
+  Widget _botonNuevoRecordatorio(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PantallaNuevoRecordatorio(title: 'Nuevo Recordatorio')),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color.fromARGB(255, 255, 161, 79),
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 20),
+        elevation: 8,
+      ),
+      child: const Text(
+        "Nuevo Recordatorio",
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      ),
     );
   }
 }
+
