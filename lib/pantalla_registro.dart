@@ -1,6 +1,4 @@
-//import 'dart:nativewrappers/_internal/vm/lib/developer.dart';
 import 'dart:developer';
-
 
 import 'package:flutter/material.dart';
 import 'package:pet_plan_pruebas/pantalla_login.dart';
@@ -8,184 +6,237 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:pet_plan_pruebas/src/widgets/custom_button.dart';
 import 'variables_globales.dart';
 
-const supabaseUrl = 'https://fzukoqnipqclppkpotbc.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6dWtvcW5pcHFjbHBwa3BvdGJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk4NzQ5ODAsImV4cCI6MjA1NTQ1MDk4MH0.Y7fmZFE3SiXvaSaYYNB1Y_WuWvAXNnA9Xdg0aJxEjjc';
-
 class PantallaRegistro extends StatefulWidget {
   const PantallaRegistro({super.key, required this.title});
-  
-
   final String title;
 
   @override
   State<PantallaRegistro> createState() => _PantallaRegistroState();
 }
 
-
 class _PantallaRegistroState extends State<PantallaRegistro> {
-final _supabaseAuth = Supabase.instance.client.auth;
-  //VARIABLES//
+  final _supabaseAuth = Supabase.instance.client.auth;
+
+  // Controladores
   final _campoUserEmailReg = TextEditingController();
   final _campoUserNombreReg = TextEditingController();
-  final  _campoUserTelefReg = TextEditingController();
+  final _campoUserTelefReg = TextEditingController();
   final _campoUserPassReg = TextEditingController();
-  
+  final _campoUserEdadReg = TextEditingController();
+  final _campoUserDireccionReg = TextEditingController();
+  final _campoUserCPReg = TextEditingController();
 
-  //late DropdownMenuItem<String> itemsMenu;
-
-  bool _isSecurePassword = true;  
-
+  bool _isSecurePassword = true;
 
   @override
-  void dispose(){
-    super.dispose();
+  void dispose() {
     _campoUserEmailReg.dispose();
+    _campoUserNombreReg.dispose();
     _campoUserTelefReg.dispose();
     _campoUserPassReg.dispose();
-    //_campoUserEdadReg = DropdownButton();
+    _campoUserEdadReg.dispose();
+    _campoUserDireccionReg.dispose();
+    _campoUserCPReg.dispose();
+    super.dispose();
   }
 
-
-  
-  Widget togglePassword(){ //Este es el TOGGLE de ver o no ver la password
-    return IconButton(onPressed: (){
-      setState(() {
-        _isSecurePassword = !_isSecurePassword;
-      });
-    }, icon: _isSecurePassword ? Icon(Icons.visibility) : Icon(Icons.visibility_off),
-    color: Colors.grey);
+  Widget togglePassword() {
+    return IconButton(
+      onPressed: () {
+        setState(() {
+          _isSecurePassword = !_isSecurePassword;
+        });
+      },
+      icon: _isSecurePassword
+          ? const Icon(Icons.visibility)
+          : const Icon(Icons.visibility_off),
+      color: Colors.grey,
+    );
   }
 
-  void guardarDatosCambiarPantallaLogin(){
-    if(_campoUserEmailReg.text.isNotEmpty && _campoUserEmailReg.text.isNotEmpty && _campoUserTelefReg.text.isNotEmpty){
-      
-      
+  Future<void> insertarUsuario(String userId) async {
+    final supabase = Supabase.instance.client;
 
-      //VariablesGlobales.usuariosRegistrados.add();
+    final response = await supabase.from('Usuarios').insert({
+      'Nombre': _campoUserNombreReg.text,
+      'Contrasena': _campoUserPassReg.text,
+      'Edad': int.tryParse(_campoUserEdadReg.text) ?? 0,
+      'Telefono': int.tryParse(_campoUserTelefReg.text) ?? 0,
+      'Correo': _campoUserEmailReg.text,
+      'Direccion': _campoUserDireccionReg.text,
+      'CP': int.tryParse(_campoUserCPReg.text) ?? 0,
+      'user_id': userId, // Enlace con tabla de autenticación
+    });
 
-      
-
-
-     // _campoUserEmail.text = "";
-     // _campoUserPass.text = "";
-
-      print("Usuarios en la lista: ${VariablesGlobales.loginEmail} \n Contraseñas en la lista: ${VariablesGlobales.loginPassword}");
-    
-
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PantallaLogin(title: "Pantalla Login")));
+    if (response.error != null) {
+      log("Error al insertar: ${response.error!.message}");
+    } else {
+      log("Usuario insertado correctamente.");
     }
   }
 
-
+  void guardarDatosCambiarPantallaLogin() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const PantallaLogin(title: "Pantalla Login"),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold( backgroundColor: const Color.fromARGB(236, 187, 205, 235),
-        body: SingleChildScrollView(child:Column(mainAxisAlignment: MainAxisAlignment.center,
-            children:[
-              AppBar(title: Text("Registro de usuario"),),
-              const Divider(height: 80),
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(236, 187, 205, 235),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AppBar(title: const Text("Registro de usuario")),
+            const Divider(height: 80),
+            const Text("Pantalla de registro",
+                style: TextStyle(fontSize: 28, color: Colors.black)),
 
-              const Text("Pantalla de registro", style: TextStyle(fontSize: 28, color: Colors.black)),
-              
-              //Text field correo
-              Padding(padding: EdgeInsets.all(40)),
-              Padding(
-                padding: const EdgeInsets.all(13),
-                child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
-                  controller: _campoUserEmailReg,  //Controlador para identificarlo
-                  decoration: const InputDecoration( 
-                    border: OutlineInputBorder(),
-                    labelText: "Correo",
-                    labelStyle: TextStyle(fontSize: 18),
-                    ),
-              )),
+            const SizedBox(height: 20),
 
-              //Text field nombre
-              Padding(padding: EdgeInsets.all(10)),
-              Padding(
-                padding: const EdgeInsets.all(13),
-                child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
-                  controller: _campoUserNombreReg,  //Controlador para identificarlo
-                  decoration: const InputDecoration( 
-                    border: OutlineInputBorder(),
-                    labelText: "Nombre",
-                    labelStyle: TextStyle(fontSize: 18),
-                    ),
-                )),
-
-              //Text field Telefono
-              Padding(padding: EdgeInsets.all(10)),
-              Padding(
-                padding: const EdgeInsets.all(13),
-                child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
-                  controller: _campoUserTelefReg, //Controlador para identificarlo
-                  keyboardType: TextInputType.numberWithOptions(), //Solo ofrece teclado numerico
-                  decoration: const InputDecoration( 
-                    border: OutlineInputBorder(),
-                    labelText: "Telefono",
-                    labelStyle: TextStyle(fontSize: 18),
-                    ),
-              )),
-
-                Padding(padding: EdgeInsets.all(10)),
-              Padding(
-                padding: const EdgeInsets.all(13),
-                child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
-                  controller: _campoUserPassReg, 
-                  obscureText: _isSecurePassword,
-                  //Controlador para identificarlo
-                  keyboardType: TextInputType.numberWithOptions(), //Solo ofrece teclado numerico
-                  decoration:  InputDecoration( 
-                    border: OutlineInputBorder(),
-                    labelText: "Contraseña",
-                    labelStyle: TextStyle(fontSize: 18),
-                    suffixIcon: togglePassword(),
-                    ),
-              )),
-    
-               Container(
-                  margin:EdgeInsets.only(left: 100, right: 100), //Esto lo separa del margen por la derecha y la izquierda
-                  child:
-                    CustomButton(  //MI BOTON PRECIOSO para vosotros chat
-                      color: Color.fromARGB(215, 163, 65, 122),
-                      width: 170.0, //Ancho
-                      height: 35.0, //Alto
-                      callback: () async {
-                        print("HOLA");
-                        try{
-                          final res = await _supabaseAuth.signUp(
-                          email: _campoUserEmailReg.text,
-                          password: _campoUserPassReg.text,
-                          );
-                          print(res);
-                          if (res.user != null) {
-                            log("Registrado");
-                            guardarDatosCambiarPantallaLogin();
-
-                            // Mostrar mensaje emergente (SnackBar)
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text("Registro exitoso"),
-                                duration: Duration(seconds: 3),
-                                
-                              ),
-                            );
-                           
-                          }
-                        }
-                        catch (e){
-                        print("fallo: $e");
-                        }
-                      },
-                      elevation: 100.0, //Esto añade algo de sombra a la caja elevandolo hacia arriba un poco
-                      child: Text("Registrar", style: TextStyle(fontSize: 17, color: const Color.fromARGB(255, 255, 255, 255))), //Aqui se podria poner una foto
-                    ),
+            // Correo
+            Padding(
+              padding: const EdgeInsets.all(13),
+              child: TextField(
+                controller: _campoUserEmailReg,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: "Correo",
+                  labelStyle: TextStyle(fontSize: 18),
                 ),
-            ] //Children
-        )
-      )
+              ),
+            ),
+
+            // Nombre
+            Padding(
+              padding: const EdgeInsets.all(13),
+              child: TextField(
+                controller: _campoUserNombreReg,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: "Nombre",
+                  labelStyle: TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+
+            // Teléfono
+            Padding(
+              padding: const EdgeInsets.all(13),
+              child: TextField(
+                controller: _campoUserTelefReg,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: "Teléfono",
+                  labelStyle: TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+
+            // Edad
+            Padding(
+              padding: const EdgeInsets.all(13),
+              child: TextField(
+                controller: _campoUserEdadReg,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: "Edad",
+                  labelStyle: TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+
+            // Dirección
+            Padding(
+              padding: const EdgeInsets.all(13),
+              child: TextField(
+                controller: _campoUserDireccionReg,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: "Dirección",
+                  labelStyle: TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+
+            // Código Postal
+            Padding(
+              padding: const EdgeInsets.all(13),
+              child: TextField(
+                controller: _campoUserCPReg,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: "Código Postal",
+                  labelStyle: TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+
+            // Contraseña
+            Padding(
+              padding: const EdgeInsets.all(13),
+              child: TextField(
+                controller: _campoUserPassReg,
+                obscureText: _isSecurePassword,
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: "Contraseña",
+                  labelStyle: const TextStyle(fontSize: 18),
+                  suffixIcon: togglePassword(),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 15),
+
+            // Botón Registrar
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 100),
+              child: CustomButton(
+                color: const Color.fromARGB(215, 163, 65, 122),
+                width: 170.0,
+                height: 35.0,
+                callback: () async {
+                  try {
+                    final res = await _supabaseAuth.signUp(
+                      email: _campoUserEmailReg.text,
+                      password: _campoUserPassReg.text,
+                    );
+
+                    if (res.user != null) {
+                      log("Registrado con éxito");
+                      await insertarUsuario(res.user!.id);
+                      guardarDatosCambiarPantallaLogin();
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Registro exitoso"),
+                          duration: Duration(seconds: 3),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    log("Fallo en registro: $e");
+                  }
+                },
+                elevation: 100.0,
+                child: const Text(
+                  "Registrar",
+                  style: TextStyle(fontSize: 17, color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
-  
 }

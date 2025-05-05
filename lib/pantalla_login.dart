@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pet_plan_pruebas/pantalla_chatia.dart';
 import 'package:pet_plan_pruebas/pantalla_main.dart';
 import 'package:pet_plan_pruebas/pantalla_registro.dart';
 import 'package:pet_plan_pruebas/src/widgets/custom_button.dart';
-import 'package:pet_plan_pruebas/variables_globales.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:pet_plan_pruebas/pantalla_reset_pass.dart';
 
