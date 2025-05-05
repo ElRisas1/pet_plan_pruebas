@@ -163,13 +163,9 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => PantallaMascota(
-                          nombreMascota: mascota, 
-                          imagenMascota: imagenesMascotas[mascota] ?? 'assets/default.png', // Imagen por defecto si no hay una asignada
-                          recordatorios: [
-                            "Saca a $mascota a pasear",
-                            "Dale la pastilla a $mascota",
-                            "Le toca veterinario a $mascota"
-                          ],),
+                          nombreMascota: mascota,
+                          imagenMascota: imagenesMascotas[mascota] ?? 'assets/default.png',
+                        ),
                       ),
                     );
                   },
