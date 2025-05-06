@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:pet_plan_pruebas/pantalla_login.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:pet_plan_pruebas/src/widgets/custom_button.dart';
-import 'variables_globales.dart';
 
 class PantallaRegistro extends StatefulWidget {
   const PantallaRegistro({super.key, required this.title});
@@ -17,7 +16,6 @@ class PantallaRegistro extends StatefulWidget {
 class _PantallaRegistroState extends State<PantallaRegistro> {
   final _supabaseAuth = Supabase.instance.client.auth;
 
-  // Controladores
   final _campoUserEmailReg = TextEditingController();
   final _campoUserNombreReg = TextEditingController();
   final _campoUserTelefReg = TextEditingController();
@@ -47,31 +45,31 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
           _isSecurePassword = !_isSecurePassword;
         });
       },
-      icon: _isSecurePassword
-          ? const Icon(Icons.visibility)
-          : const Icon(Icons.visibility_off),
-      color: Colors.grey,
+      icon: Icon(
+        _isSecurePassword ? Icons.visibility : Icons.visibility_off,
+        color: Colors.grey,
+      ),
     );
   }
 
   Future<void> insertarUsuario(String userId) async {
     final supabase = Supabase.instance.client;
 
-    final response = await supabase.from('Usuarios').insert({
-      'Nombre': _campoUserNombreReg.text,
-      'Contrasena': _campoUserPassReg.text,
-      'Edad': int.tryParse(_campoUserEdadReg.text) ?? 0,
-      'Telefono': int.tryParse(_campoUserTelefReg.text) ?? 0,
-      'Correo': _campoUserEmailReg.text,
-      'Direccion': _campoUserDireccionReg.text,
-      'CP': int.tryParse(_campoUserCPReg.text) ?? 0,
-      'user_id': userId, // Enlace con tabla de autenticación
-    });
+    try {
+      await supabase.from('Usuarios').insert({
+        'Nombre': _campoUserNombreReg.text,
+        'Contrasena': _campoUserPassReg.text,
+        'Edad': int.tryParse(_campoUserEdadReg.text) ?? 0,
+        'Telefono': int.tryParse(_campoUserTelefReg.text) ?? 0,
+        'Correo': _campoUserEmailReg.text,
+        'Direccion': _campoUserDireccionReg.text,
+        'CP': int.tryParse(_campoUserCPReg.text) ?? 0,
+        'user_id': userId,
+      });
 
-    if (response.error != null) {
-      log("Error al insertar: ${response.error!.message}");
-    } else {
       log("Usuario insertado correctamente.");
+    } catch (e) {
+      log("Error al insertar usuario: $e");
     }
   }
 
@@ -93,99 +91,28 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
           children: [
             AppBar(title: const Text("Registro de usuario")),
             const Divider(height: 80),
-            const Text("Pantalla de registro",
-                style: TextStyle(fontSize: 28, color: Colors.black)),
-
+            const Text(
+              "Pantalla de registro",
+              style: TextStyle(fontSize: 28, color: Colors.black),
+            ),
             const SizedBox(height: 20),
 
-            // Correo
-            Padding(
-              padding: const EdgeInsets.all(13),
-              child: TextField(
-                controller: _campoUserEmailReg,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "Correo",
-                  labelStyle: TextStyle(fontSize: 18),
-                ),
-              ),
-            ),
+            // Campos de texto
+            campoTexto("Correo", _campoUserEmailReg),
+            campoTexto("Nombre", _campoUserNombreReg),
+            campoTexto("Teléfono", _campoUserTelefReg,
+                tipo: TextInputType.number),
+            campoTexto("Edad", _campoUserEdadReg,
+                tipo: TextInputType.number),
+            campoTexto("Dirección", _campoUserDireccionReg),
+            campoTexto("Código Postal", _campoUserCPReg,
+                tipo: TextInputType.number),
 
-            // Nombre
-            Padding(
-              padding: const EdgeInsets.all(13),
-              child: TextField(
-                controller: _campoUserNombreReg,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "Nombre",
-                  labelStyle: TextStyle(fontSize: 18),
-                ),
-              ),
-            ),
-
-            // Teléfono
-            Padding(
-              padding: const EdgeInsets.all(13),
-              child: TextField(
-                controller: _campoUserTelefReg,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "Teléfono",
-                  labelStyle: TextStyle(fontSize: 18),
-                ),
-              ),
-            ),
-
-            // Edad
-            Padding(
-              padding: const EdgeInsets.all(13),
-              child: TextField(
-                controller: _campoUserEdadReg,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "Edad",
-                  labelStyle: TextStyle(fontSize: 18),
-                ),
-              ),
-            ),
-
-            // Dirección
-            Padding(
-              padding: const EdgeInsets.all(13),
-              child: TextField(
-                controller: _campoUserDireccionReg,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "Dirección",
-                  labelStyle: TextStyle(fontSize: 18),
-                ),
-              ),
-            ),
-
-            // Código Postal
-            Padding(
-              padding: const EdgeInsets.all(13),
-              child: TextField(
-                controller: _campoUserCPReg,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "Código Postal",
-                  labelStyle: TextStyle(fontSize: 18),
-                ),
-              ),
-            ),
-
-            // Contraseña
             Padding(
               padding: const EdgeInsets.all(13),
               child: TextField(
                 controller: _campoUserPassReg,
                 obscureText: _isSecurePassword,
-                keyboardType: TextInputType.text,
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   labelText: "Contraseña",
@@ -197,7 +124,6 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
 
             const SizedBox(height: 15),
 
-            // Botón Registrar
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 100),
               child: CustomButton(
@@ -225,6 +151,12 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                     }
                   } catch (e) {
                     log("Fallo en registro: $e");
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Error: $e"),
+                        duration: const Duration(seconds: 4),
+                      ),
+                    );
                   }
                 },
                 elevation: 100.0,
@@ -235,6 +167,22 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Padding campoTexto(String label, TextEditingController controller,
+      {TextInputType tipo = TextInputType.text}) {
+    return Padding(
+      padding: const EdgeInsets.all(13),
+      child: TextField(
+        controller: controller,
+        keyboardType: tipo,
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          labelText: label,
+          labelStyle: const TextStyle(fontSize: 18),
         ),
       ),
     );
