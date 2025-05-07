@@ -77,15 +77,27 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
     children: [
       // AppBar
       AppBar(
-        title: Text("Pet Plan"),
+        title: Text(""),
         backgroundColor: Color.fromARGB(100, 255, 242, 168),
       ),
 
-      // DROP DOWN MENU //
+      // Boton Ajustes //
       Positioned(
-            top: screenHeight * 0.06,
+            top: screenHeight * 0.04,
             left: screenWidth * 0.05,
-            child: DropdownButton<String>(
+            child: Material(
+              color: Colors.white,
+              shape: const CircleBorder(),
+              elevation: 5,
+              child: IconButton(
+                icon: const Icon(Icons.settings, size: 35, color: Colors.blueGrey),
+                onPressed: (){
+                  Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const PantallaAjustes(title: '',)),
+                    );
+                })
+            )
+             /** DropdownButton<String>(
               value: selectedItem, // Puede ser nulo, o sea no hay nada seleccionado.
               hint: Text("Selecciona"), // Texto cuando no hay selección
               items: menu.map((item) => DropdownMenuItem<String>(
@@ -93,7 +105,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                 child: Text(item, style: TextStyle(fontSize: 15)),
               )).toList(),
               onChanged: onMenuSelected,
-            ),
+            ),*/
           ),
     
       // IMAGEN DE PERFIL - Ubicación en la parte superior derecha
