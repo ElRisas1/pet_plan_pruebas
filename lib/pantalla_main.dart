@@ -48,7 +48,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
       } else if (item == "Ayuda") {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => PantallaAyuda(title: '',)),
+          MaterialPageRoute(builder: (context) => PantallaAyuda(title: '', opcionesAjustes: '',)),
         );
       }
     }
@@ -83,14 +83,14 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
 
       // Boton Ajustes //
       Positioned(
-            top: screenHeight * 0.04,
+            top: screenHeight * 0.05,
             left: screenWidth * 0.05,
             child: Material(
               color: Colors.white,
               shape: const CircleBorder(),
               elevation: 5,
               child: IconButton(
-                icon: const Icon(Icons.settings, size: 35, color: Colors.blueGrey),
+                icon: const Icon(Icons.settings, size: 40, color: Colors.blueGrey),
                 onPressed: (){
                   Navigator.push(context,
                     MaterialPageRoute(builder: (context) => const PantallaAjustes(title: '',)),
