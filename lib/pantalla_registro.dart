@@ -1,90 +1,82 @@
-//import 'dart:nativewrappers/_internal/vm/lib/developer.dart';
 import 'dart:developer';
-
 
 import 'package:flutter/material.dart';
 import 'package:pet_plan_pruebas/pantalla_login.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'constructor_registro.dart';
 import 'package:pet_plan_pruebas/src/widgets/custom_button.dart';
-import 'variables_globales.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
-const supabaseUrl = 'https://fzukoqnipqclppkpotbc.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6dWtvcW5pcHFjbHBwa3BvdGJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk4NzQ5ODAsImV4cCI6MjA1NTQ1MDk4MH0.Y7fmZFE3SiXvaSaYYNB1Y_WuWvAXNnA9Xdg0aJxEjjc';
 
 class PantallaRegistro extends StatefulWidget {
   const PantallaRegistro({super.key, required this.title});
-  
-
   final String title;
 
   @override
   State<PantallaRegistro> createState() => _PantallaRegistroState();
 }
 
-
 class _PantallaRegistroState extends State<PantallaRegistro> {
-final _supabaseAuth = Supabase.instance.client.auth;
-  //VARIABLES//
+  final _supabaseAuth = Supabase.instance.client.auth;
+
   final _campoUserEmailReg = TextEditingController();
   final _campoUserNombreReg = TextEditingController();
-  final  _campoUserTelefReg = TextEditingController();
+  final _campoUserTelefReg = TextEditingController();
   final _campoUserPassReg = TextEditingController();
-  final _campoUserEdadReg = TextEditingController();
-  final _campoUserCpReg = TextEditingController();
-  final _campoUserDireccionReg = TextEditingController();
   
 
   //late DropdownMenuItem<String> itemsMenu;
 
-  bool _isSecurePassword = true;  
-
+  bool _isSecurePassword = true;
 
   @override
-  void dispose(){
-    super.dispose();
+  void dispose() {
     _campoUserEmailReg.dispose();
+    _campoUserNombreReg.dispose();
     _campoUserTelefReg.dispose();
     _campoUserPassReg.dispose();
-    _campoUserEdadReg.dispose();
-    _campoUserCpReg.dispose();
-    _campoUserDireccionReg.dispose();
     //_campoUserEdadReg = DropdownButton();
   }
 
-
-  
-  Widget togglePassword(){ //Este es el TOGGLE de ver o no ver la password
-    return IconButton(onPressed: (){
-      setState(() {
-        _isSecurePassword = !_isSecurePassword;
-      });
-    }, icon: _isSecurePassword ? Icon(Icons.visibility) : Icon(Icons.visibility_off),
-    color: Colors.grey);
+  Widget togglePassword() {
+    return IconButton(
+      onPressed: () {
+        setState(() {
+          _isSecurePassword = !_isSecurePassword;
+        });
+      },
+      icon: Icon(
+        _isSecurePassword ? Icons.visibility : Icons.visibility_off,
+        color: Colors.grey,
+      ),
+    );
   }
 
-  void guardarDatosCambiarPantallaLogin(){
-    if(_campoUserEmailReg.text.isNotEmpty && _campoUserEmailReg.text.isNotEmpty && _campoUserTelefReg.text.isNotEmpty){
-      
-      
+  Future<void> insertarUsuario(String userId) async {
+    final supabase = Supabase.instance.client;
 
-      //VariablesGlobales.usuariosRegistrados.add();
+    try {
+      await supabase.from('Usuarios').insert({
+        'Nombre': _campoUserNombreReg.text,
+        'Contrasena': _campoUserPassReg.text,
+        'Edad': int.tryParse(_campoUserEdadReg.text) ?? 0,
+        'Telefono': int.tryParse(_campoUserTelefReg.text) ?? 0,
+        'Correo': _campoUserEmailReg.text,
+        'Direccion': _campoUserDireccionReg.text,
+        'CP': int.tryParse(_campoUserCPReg.text) ?? 0,
+        'user_id': userId,
+      });
 
-      
-
-
-     // _campoUserEmail.text = "";
-     // _campoUserPass.text = "";
-
-      print("Usuarios en la lista: ${VariablesGlobales.loginEmail} \n Contraseñas en la lista: ${VariablesGlobales.loginPassword}");
-    
-
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PantallaLogin(title: "Pantalla Login")));
+      log("Usuario insertado correctamente.");
+    } catch (e) {
+      log("Error al insertar usuario: $e");
     }
   }
 
-
+  void guardarDatosCambiarPantallaLogin() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const PantallaLogin(title: "Pantalla Login"),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -136,44 +128,6 @@ final _supabaseAuth = Supabase.instance.client.auth;
                     ),
               )),
 
-              Padding(padding: EdgeInsets.all(10)),
-              Padding(
-                padding: const EdgeInsets.all(13),
-                child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
-                  controller: _campoUserEdadReg, //Controlador para identificarlo
-                  keyboardType: TextInputType.numberWithOptions(), //Solo ofrece teclado numerico
-                  decoration: const InputDecoration( 
-                    border: OutlineInputBorder(),
-                    labelText: "Edad",
-                    labelStyle: TextStyle(fontSize: 18),
-                    ),
-              )),
-
-              Padding(padding: EdgeInsets.all(10)),
-              Padding(
-                padding: const EdgeInsets.all(13),
-                child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
-                  controller: _campoUserCpReg, //Controlador para identificarlo
-                  keyboardType: TextInputType.numberWithOptions(), //Solo ofrece teclado numerico
-                  decoration: const InputDecoration( 
-                    border: OutlineInputBorder(),
-                    labelText: "Código Postal",
-                    labelStyle: TextStyle(fontSize: 18),
-                    ),
-              )),
-
-              Padding(padding: EdgeInsets.all(10)),
-              Padding(
-                padding: const EdgeInsets.all(13),
-                child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
-                  controller: _campoUserDireccionReg,  //Controlador para identificarlo
-                  decoration: const InputDecoration( 
-                    border: OutlineInputBorder(),
-                    labelText: "Dirección",
-                    labelStyle: TextStyle(fontSize: 18),
-                    ),
-                )),
-
                 Padding(padding: EdgeInsets.all(10)),
               Padding(
                 padding: const EdgeInsets.all(13),
@@ -209,29 +163,49 @@ final _supabaseAuth = Supabase.instance.client.auth;
                             log("Registrado");
                             guardarDatosCambiarPantallaLogin();
 
-                            // Mostrar mensaje emergente (SnackBar)
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text("Registro exitoso"),
-                                duration: Duration(seconds: 3),
-                                
-                              ),
-                            );
-                           
-                          }
-                        }
-                        catch (e){
-                        print("fallo: $e");
-                        }
-                      },
-                      elevation: 100.0, //Esto añade algo de sombra a la caja elevandolo hacia arriba un poco
-                      child: Text("Registrar", style: TextStyle(fontSize: 17, color: const Color.fromARGB(255, 255, 255, 255))), //Aqui se podria poner una foto
-                    ),
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Registro exitoso"),
+                          duration: Duration(seconds: 3),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    log("Fallo en registro: $e");
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Error: $e"),
+                        duration: const Duration(seconds: 4),
+                      ),
+                    );
+                  }
+                },
+                elevation: 100.0,
+                child: const Text(
+                  "Registrar",
+                  style: TextStyle(fontSize: 17, color: Colors.white),
                 ),
-            ] //Children
-        )
-      )
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
-  
+
+  Padding campoTexto(String label, TextEditingController controller,
+      {TextInputType tipo = TextInputType.text}) {
+    return Padding(
+      padding: const EdgeInsets.all(13),
+      child: TextField(
+        controller: controller,
+        keyboardType: tipo,
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          labelText: label,
+          labelStyle: const TextStyle(fontSize: 18),
+        ),
+      ),
+    );
+  }
 }

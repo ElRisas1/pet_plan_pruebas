@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pet_plan_pruebas/pantalla_chatia.dart';
 import 'package:pet_plan_pruebas/pantalla_main.dart';
 import 'package:pet_plan_pruebas/pantalla_registro.dart';
 import 'package:pet_plan_pruebas/src/widgets/custom_button.dart';
-import 'package:pet_plan_pruebas/variables_globales.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:pet_plan_pruebas/pantalla_reset_pass.dart';
 
@@ -70,7 +68,7 @@ class _PantallaLoginState extends State<PantallaLogin> {
         MaterialPageRoute(builder: (context) => const PantallaPrincipal(title: "PantallaPrincipal")),
         );
     }
-  } on AuthException catch(e) {
+  } on AuthException {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("Error:Verifica tu correo o contraseña."))
