@@ -56,72 +56,79 @@ class _PantallaChatIAState extends State<PantallaChatIA> {
 
   
   @override
-  Widget build(BuildContext context) {
-      return  Scaffold( 
-        backgroundColor: const Color.fromARGB(248, 152, 184, 239),
-        appBar: AppBar(title: Text("Chat IA")),
-        body: SingleChildScrollView(child:Column(mainAxisAlignment: MainAxisAlignment.center,
-            children:[
-              const Divider(height: 80),
-              const Text("Habla con nuestra IA", style: TextStyle(fontSize: 37, color: Color.fromARGB(255, 0, 0, 0))),
-              Padding(padding: EdgeInsets.all(20)),
-
-              SizedBox( //FoTo logo roñosa
-                height: 200.0,
-                width: 200.0,
-                child: Image.asset("assets/logoLorena.png")  
-              ),
-
-
-              Padding(padding: EdgeInsets.all(25), //RESPUESTA IA
-                child: Text("La respuesta es: $respuesta", style: TextStyle(fontSize: 20),)
-              ),
-             
-              Expanded(
-                child: GroupedListView<Mensaje, DateTime>(
-                padding: const EdgeInsets.all(8),
-                elements: mensajes,
-                groupBy: (mensaje) => DateTime(2025),
-                groupHeaderBuilder: (Mensaje mensaje) => SizedBox(),
-                itemBuilder: (context, Mensaje mensaje) => Container(),
-
-                )
-              ),
-
-              Container(
-                padding: const EdgeInsets.all(13),
-                color: Colors.grey.shade300,
-                child: 
-                TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
-                  controller: _campoPrompt,  //Controlador para identificarlo
-                  decoration: const InputDecoration( 
-                    border: OutlineInputBorder(),
-                    labelText: "Introduce lo que quieras saber",
-                    labelStyle: TextStyle(fontSize: 18),
-                    ),   
-                )
-              ),
-
-
-              Padding(padding: EdgeInsets.all(10)),
-              Container(
-                margin:EdgeInsets.only(left: 100, right: 100), //Esto lo separa del margen por la derecha y la izquierda
-                child:
-                  CustomButton(  //MI BOTON PRECIOSO para vosotros chat
-                    color: Color.fromARGB(0, 0, 0, 0),
-                    width: 100.0, //Ancho
-                    height: 30.0, //Alto
-                    callback: () {
-                      chatIA();
-                    },
-                    child: Text("Enviar", style: TextStyle(fontSize: 17, color: const Color.fromARGB(255, 0, 89, 255), fontStyle: FontStyle.normal)), //Aqui se podria poner una foto
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: const Color.fromARGB(248, 152, 184, 239),
+    appBar: AppBar(title: Text("Chat IA")),
+    body: SafeArea(
+      child: Column(
+        children: [
+          const SizedBox(height: 20),
+          const Text(
+            "Habla con nuestra IA",
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            height: 120,
+            width: 120,
+            child: Image.asset("assets/logoLorena.png"),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Text("La respuesta es: $respuesta", style: TextStyle(fontSize: 18)),
+          ),
+          Expanded(
+            child: GroupedListView<Mensaje, DateTime>(
+              elements: mensajes,
+              groupBy: (mensaje) => DateTime(2025),
+              groupHeaderBuilder: (_) => const SizedBox(),
+              itemBuilder: (context, mensaje) => ListTile(
+                title: Align(
+                  alignment: mensaje.isSentByMe ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: mensaje.isSentByMe ? Colors.blue[100] : Colors.grey[300],
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(mensaje.texto),
                   ),
                 ),
-              Padding(padding: EdgeInsets.all(20)),
-
-             ] //Children  
-        )
-        )
-      );
-  } //Build
-} //Final de la class
+              ),
+              useStickyGroupSeparators: false,
+              floatingHeader: false,
+              order: GroupedListOrder.ASC,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _campoPrompt,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: "Introduce lo que quieras saber",
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: CustomButton(
+              color: Colors.transparent,
+              width: 100.0,
+              height: 40.0,
+              callback: () {
+                chatIA();
+              },
+              child: const Text(
+                "Enviar",
+                style: TextStyle(fontSize: 17, color: Color.fromARGB(255, 0, 89, 255)),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+}
