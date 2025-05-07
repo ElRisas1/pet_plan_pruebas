@@ -3,7 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 
 class PantallaAyuda extends StatefulWidget {
-  const PantallaAyuda({super.key, required this.title});
+  const PantallaAyuda({super.key, required this.title, required String opcionesAjustes});
 
   final String title;
 
@@ -17,7 +17,7 @@ class _PantallaAyudaState extends State<PantallaAyuda> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 152, 184, 239),
       appBar: AppBar(
-        title: const Text("Help"),
+        title: const Text("Ayuda"),
         backgroundColor: const Color.fromARGB(255, 119, 150, 209),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -31,6 +31,9 @@ class _PantallaAyudaState extends State<PantallaAyuda> {
   }
 
   Widget content() {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -47,22 +50,22 @@ class _PantallaAyudaState extends State<PantallaAyuda> {
                 children: const [
                   Center(
                     child: Text(
-                      "Most asked questions",
+                      "Preguntas Frecuentes",
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ),
                   SizedBox(height: 20),
                   Text(
-                    "Which animals can I use here?",
+                    "¿Qué animales premite la aplicación?",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
-                  Text("Dogs and cats!"),
+                  Text("Respuesta: Perros y Gatos."),
                   SizedBox(height: 15),
                   Text(
-                    "How many pets can I log?",
+                    "¿Cuantas mascotas puedo tener en la aplicación?",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
-                  Text("Right now two pets!"),
+                  Text("Respuesta: Por los momentos 5 mascotas."),
                 ],
               ),
             ),
