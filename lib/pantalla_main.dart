@@ -24,7 +24,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
 
   // VARIABLES
   String? selectedItem = "Menu";  //item seleccionado, empieza siendo 'menu'
-  final String nombrePrueba = "chamaquito"; //nombre de prueba para el usuario
+  final String nombrePrueba = "chamaquito (Y esta vaina? JJAJAJAJ, vaya nombres os sacais guapos)"; //nombre de prueba para el usuario
 
   // Listas //
   final List<String> mascotas = ["Firulais", "Luna", "Max"]; //Lista de mascotas para el carrusel
