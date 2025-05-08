@@ -12,8 +12,10 @@ class PantallaAyuda extends StatefulWidget {
 }
 
 class _PantallaAyudaState extends State<PantallaAyuda> {
+
   @override
   Widget build(BuildContext context) {
+    //Estilo de la pagina
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 152, 184, 239),
       appBar: AppBar(
@@ -26,11 +28,12 @@ class _PantallaAyudaState extends State<PantallaAyuda> {
           },
         ),
       ),
-      body: content(),
+      body: content(), //Widget con todo el contenido de la pagina
     );
   }
 
   Widget content() {
+    // Variables para que la pantalla sea dinámica y funcionen las dimensiones en cualquier movil.
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     
@@ -39,7 +42,7 @@ class _PantallaAyudaState extends State<PantallaAyuda> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Card principal con preguntas
+          // Card principal con las preguntas y respuestas.
           Card(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             elevation: 6,
@@ -94,7 +97,7 @@ class _PantallaAyudaState extends State<PantallaAyuda> {
               child: Column(
                 children: [
                   const Text(
-                    "Find us and send your questions!",
+                    "Encuentranos y escribenos!",
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 15),
@@ -130,7 +133,6 @@ class _PantallaAyudaState extends State<PantallaAyuda> {
                     ),
                   ],
                 )
-
                 ],
               ),
             ),
