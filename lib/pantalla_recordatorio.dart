@@ -102,13 +102,18 @@ class _PantallaRecordatorioState extends State<PantallaRecordatorio> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => DetalleRecordatorio(
+                                          id: rec['Id_recor'], 
                                           nombre: rec['Nombre'] ?? '',
                                           fecha: DateFormat('dd/MM/yyyy').format(fechaDateTime),
                                           hora: DateFormat('HH:mm').format(fechaDateTime),
                                           nota: rec['Notas'] ?? '',
                                         ),
                                       ),
-                                    );
+                                    ).then((eliminado) {
+                                      if (eliminado == true) {
+                                        _cargarRecordatorios(); // Recarga si se eliminó
+                                      }
+                                    });
                                   },
                                 ),
                               );
@@ -127,7 +132,7 @@ class _PantallaRecordatorioState extends State<PantallaRecordatorio> {
                     builder: (context) => const PantallaNuevoRecordatorio(title: "Nuevo recordatorio"),
                   ),
                 );
-                _cargarRecordatorios(); // recarga después de volver
+                _cargarRecordatorios(); // Recarga al volver
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,

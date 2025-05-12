@@ -245,13 +245,18 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => DetalleRecordatorio(
+                                      id: rec['Id_recor'], // ✅ ESTA LÍNEA ES CLAVE
                                       nombre: rec['Nombre'],
                                       fecha: DateFormat('dd/MM/yyyy').format(fecha),
                                       hora: DateFormat('HH:mm').format(fecha),
-                                      nota: rec['Notas'],
-                                    ),
-                                  ),
-                                );
+                                      nota: rec['Notas'] ?? '',
+                                      ),
+                                          ),
+                                            ).then((eliminado) {
+                                  if (eliminado == true) {
+                                    _cargarRecordatorios(); // 🔄 Recarga si se eliminó
+                                  }
+                                });
                               },
                             );
                           },

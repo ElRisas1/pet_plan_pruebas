@@ -1,108 +1,147 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class DetalleRecordatorio extends StatelessWidget {
+  final String id;
   final String nombre;
   final String fecha;
-  final String nota;
   final String hora;
+  final String nota;
 
   const DetalleRecordatorio({
     super.key,
+    required this.id,
     required this.nombre,
     required this.fecha,
-    required this.nota,
     required this.hora,
+    required this.nota,
   });
+
+  Future<void> _eliminarRecordatorio(BuildContext context) async {
+    try {
+      final supabase = Supabase.instance.client;
+
+      await supabase
+          .from('recordatorios')
+          .delete()
+          .eq('Id_recor', id);
+
+      Navigator.pop(context, true);
+    } catch (e) {
+      print("Error eliminando recordatorio: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Error al eliminar el recordatorio")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFA7C4ED),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Encabezado
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back, size: 28),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ),
-                  const Center(
-                    child: Text(
-                      "Recordatorio",
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+    final textStyle = const TextStyle(fontSize: 16, fontWeight: FontWeight.w500);
+    final labelStyle = const TextStyle(fontSize: 16, color: Colors.black54);
 
-            // Contenido
-            Expanded(
-              child: Center(
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.85,
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [const BoxShadow(color: Colors.black26, blurRadius: 6)],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text("Time: $hora", style: const TextStyle(fontSize: 16)),
-                      const SizedBox(height: 10),
-                      Text("Name: $nombre", style: const TextStyle(fontSize: 16)),
-                      const SizedBox(height: 10),
-                      Text("Date: $fecha", style: const TextStyle(fontSize: 16)),
-                      const SizedBox(height: 10),
-                      Text(
-                        "Note: ${nota.isEmpty ? 'Empty' : nota}",
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: nota.isEmpty ? Colors.grey : Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 30),
-                      ElevatedButton(
-                        onPressed: () {
-                          // lógica de edición pendiente
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                        ),
-                        child: const Center(child: Text("Edit", style: TextStyle(fontSize: 16))),
-                      ),
-                      const SizedBox(height: 12),
-                      ElevatedButton(
-                        onPressed: () {
-                          // lógica de eliminación pendiente
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                        ),
-                        child: const Center(child: Text("Delete", style: TextStyle(fontSize: 16))),
-                      ),
-                    ],
-                  ),
+    return Scaffold(
+      backgroundColor: const Color(0xFFBFD7F0), // fondo azul claro
+      body: SafeArea(
+        child: Center(
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+            padding: const EdgeInsets.all(25),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  offset: Offset(0, 5),
                 ),
-              ),
+              ],
             ),
-          ],
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Icono de volver y título centrado
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: const Icon(Icons.arrow_back, size: 28),
+                    ),
+                    const Expanded(
+                      child: Center(
+                        child: Text(
+                          "Reminder",
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 28), // espacio para equilibrar visualmente
+                  ],
+                ),
+                const SizedBox(height: 20),
+                _buildInfoRow("Time:", hora, textStyle, labelStyle),
+                _buildInfoRow("Name:", nombre, textStyle, labelStyle),
+                _buildInfoRow("Date:", fecha, textStyle, labelStyle),
+                _buildInfoRow("Note:", nota.isNotEmpty ? nota : "Empty", textStyle, labelStyle),
+                const SizedBox(height: 30),
+                _buildButton(
+                  context,
+                  text: "Edit",
+                  color: Colors.green[700]!,
+                  onPressed: () {
+                    // Puedes enlazar a pantalla de edición si la tienes
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildButton(
+                  context,
+                  text: "Delete",
+                  color: Colors.red[400]!,
+                  onPressed: () => _eliminarRecordatorio(context),
+                ),
+              ],
+            ),
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value, TextStyle valueStyle, TextStyle labelStyle) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: labelStyle),
+          const SizedBox(width: 6),
+          Expanded(child: Text(value, style: valueStyle)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildButton(BuildContext context, {
+    required String text,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+        ),
+        child: Text(text, style: const TextStyle(fontSize: 16)),
       ),
     );
   }
