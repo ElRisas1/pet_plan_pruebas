@@ -4,14 +4,13 @@ import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 // Pantallas
-import 'package:pet_plan_pruebas/pantalla_ajustes.dart';
-import 'package:pet_plan_pruebas/pantalla_ayuda.dart';
-import 'package:pet_plan_pruebas/pantalla_chatia.dart';
-import 'package:pet_plan_pruebas/pantalla_mascota.dart';
-import 'package:pet_plan_pruebas/pantalla_perfil.dart';
-import 'package:pet_plan_pruebas/pantalla_recordatorio.dart';
-
-
+import 'pantalla_recordatorio.dart';
+import 'pantalla_ajustes.dart';
+import 'pantalla_ayuda.dart';
+import 'pantalla_chatia.dart';
+import 'pantalla_mascota.dart';
+import 'pantalla_perfil.dart';
+import "detallerecordatorio.dart";
 
 class PantallaPrincipal extends StatefulWidget {
   const PantallaPrincipal({super.key, required this.title});
@@ -22,47 +21,10 @@ class PantallaPrincipal extends StatefulWidget {
 }
 
 class _PantallaPrincipalState extends State<PantallaPrincipal> {
+  final List<String> mascotas = ["Firulais", "Luna", "Max"];
+  List<Map<String, dynamic>> recordatorios = [];
+  bool cargandoRecordatorios = true;
 
-  // VARIABLES
-  String? selectedItem = "Menu";  //item seleccionado, empieza siendo 'menu'
-  final String nombrePrueba = "chamaquito (Y esta vaina? JJAJAJAJ, vaya nombres os sacais guapos)"; //nombre de prueba para el usuario
-
-  // Listas //
-  final List<String> mascotas = ["Firulais", "Luna", "Max"]; //Lista de mascotas para el carrusel
-
-  List<String> recordatorios = ["saca a firulais a pasear", "Dale la pastilla a Luna", "Hoy le toca veterinario a Max" ];  //lista de recordatorios de prueba
-
-  List<String> menu = ["Menu","Ajustes", "Ayuda"]; //lista de items para el dropdown menu
-
-  
-  /// Void para gestionar las selecciones
-  void onMenuSelected(String? item) {
-      if (item == null) return; // si es null
-
-      setState(() => selectedItem = item); // actualiza el estado con el ítem seleccionado
-
-      if (item == "Ajustes") {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => PantallaAjustes(title: '',)),
-        );
-      } else if (item == "Ayuda") {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => PantallaAyuda(title: '', opcionesAjustes: '',)),
-        );
-      }
-    }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(248, 238, 220, 138),
-      body: content(),
-    );
-  }
-
-  // MAPA DE MASCOTAS E IMAGENES //
   Map<String, String> imagenesMascotas = {
     "Firulais": "assets/Perro1.png",
     "Luna": "assets/gatobonito.jpg",
@@ -105,7 +67,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
             backgroundColor: Color.fromARGB(100, 255, 242, 168),
           ),
 
-          // Botón circular de ajustes
+          // Botón de ajustes
           Positioned(
             top: screenHeight * 0.06,
             left: screenWidth * 0.05,
@@ -160,7 +122,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
             ),
           ),
 
-          // Título "Mis Mascotas"
+          // Título mascotas
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
@@ -172,7 +134,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
             ),
           ),
 
-          // Carrusel de mascotas
+          // Carrusel mascotas
           Positioned(
             top: screenHeight * 0.28,
             left: screenWidth * 0.05,
@@ -213,21 +175,41 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
             ),
           ),
 
-          // Título "Recordatorios"
-          Align(
-            alignment: Alignment.center,
-            child: Padding(
-              padding: EdgeInsets.only(top: screenHeight * 0.55),
-              child: const Text(
-                "Recordatorios",
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-              ),
+          // Título recordatorios y botón +
+          Positioned(
+            top: screenHeight * 0.53,
+            left: screenWidth * 0.1,
+            right: screenWidth * 0.1,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Recordatorios",
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                ),
+                Material(
+                  color: Colors.green,
+                  shape: const CircleBorder(),
+                  child: IconButton(
+                    icon: const Icon(Icons.add, size: 28, color: Colors.white),
+                    onPressed: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PantallaRecordatorio(recordatorio: ""),
+                        ),
+                      );
+                      _cargarRecordatorios(); // 👈 se actualiza al volver
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
 
           // Caja de recordatorios
           Positioned(
-            top: screenHeight * 0.62,
+            top: screenHeight * 0.6,
             left: screenWidth * 0.1,
             right: screenWidth * 0.1,
             child: Container(
@@ -277,25 +259,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
             ),
           ),
 
-          // Botón "+" para agregar recordatorio
-          Positioned(
-            top: screenHeight * 0.595,
-            right: screenWidth * 0.08,
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                MaterialPageRoute(builder: (context) => const PantallaRecordatorio(recordatorio: "")),
-                );
-              },
-              backgroundColor: Colors.green,
-              child: const Icon(Icons.add),
-              mini: true,
-              heroTag: "btnAddRecordatorio",
-            ),
-          ),
-
-          // Botón para hablar con IA
+          // Botón hablar con IA
           Positioned(
             bottom: screenHeight * 0.05,
             left: screenWidth * 0.2,
