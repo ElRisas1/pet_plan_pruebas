@@ -167,9 +167,10 @@ class PantallaPerfil extends StatelessWidget {
                     ),
                   ),
 
-                   // Caja para album de fotos
+                   /*/ Caja para album de fotos
                   const SizedBox(height: 20),
-                  PhotoSection(),
+                  PhotoSection(),*/
+
                    // Caja para boton de cerrar sesion
                   const SizedBox(height: 20),
                   ElevatedButton(
@@ -272,10 +273,7 @@ class AddPetCard extends StatelessWidget {
   }
 }
 
-
-
-
-
+/*
 // Sección para mostrar y añadir fotos
 class PhotoSection extends StatelessWidget {
 
@@ -316,7 +314,8 @@ class PhotoSection extends StatelessWidget {
       ),
     );
   }
-}
+}*/
+
 //Botón de Edición del perfil
 class EditarPerfil extends StatelessWidget {
   const EditarPerfil({super.key});
