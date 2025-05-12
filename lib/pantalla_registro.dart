@@ -21,11 +21,8 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
   final _campoUserTelefReg = TextEditingController();
   final _campoUserPassReg = TextEditingController();
   final _campoUserEdadReg = TextEditingController();
-  final _campoUserCpReg = TextEditingController();
   final _campoUserDireccionReg = TextEditingController();
-  
-
-  //late DropdownMenuItem<String> itemsMenu;
+  final _campoUserCPReg = TextEditingController();
 
   bool _isSecurePassword = true;
 
@@ -36,9 +33,9 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
     _campoUserTelefReg.dispose();
     _campoUserPassReg.dispose();
     _campoUserEdadReg.dispose();
-    _campoUserCpReg.dispose();
     _campoUserDireccionReg.dispose();
-    //_campoUserEdadReg = DropdownButton();
+    _campoUserCPReg.dispose();
+    super.dispose();
   }
 
   Widget togglePassword() {
@@ -66,7 +63,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
         'Telefono': int.tryParse(_campoUserTelefReg.text) ?? 0,
         'Correo': _campoUserEmailReg.text,
         'Direccion': _campoUserDireccionReg.text,
-        'CP': int.tryParse(_campoUserCpReg.text) ?? 0,
+        'CP': int.tryParse(_campoUserCPReg.text) ?? 0,
         'user_id': userId,
       });
 
@@ -86,126 +83,64 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold( backgroundColor: const Color.fromARGB(236, 187, 205, 235),
-        body: SingleChildScrollView(child:Column(mainAxisAlignment: MainAxisAlignment.center,
-            children:[
-              AppBar(title: Text("Registro de usuario"),),
-              const Divider(height: 80),
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(236, 187, 205, 235),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AppBar(title: const Text("Registro de usuario")),
+            const Divider(height: 80),
+            const Text(
+              "Pantalla de registro",
+              style: TextStyle(fontSize: 28, color: Colors.black),
+            ),
+            const SizedBox(height: 20),
 
-              const Text("Pantalla de registro", style: TextStyle(fontSize: 28, color: Colors.black)),
-              
-              //Text field correo
-              Padding(padding: EdgeInsets.all(40)),
-              Padding(
-                padding: const EdgeInsets.all(13),
-                child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
-                  controller: _campoUserEmailReg,  //Controlador para identificarlo
-                  decoration: const InputDecoration( 
-                    border: OutlineInputBorder(),
-                    labelText: "Correo",
-                    labelStyle: TextStyle(fontSize: 18),
-                    ),
-              )),
+            // Campos de texto
+            campoTexto("Correo", _campoUserEmailReg),
+            campoTexto("Nombre", _campoUserNombreReg),
+            campoTexto("Teléfono", _campoUserTelefReg,
+                tipo: TextInputType.number),
+            campoTexto("Edad", _campoUserEdadReg,
+                tipo: TextInputType.number),
+            campoTexto("Dirección", _campoUserDireccionReg),
+            campoTexto("Código Postal", _campoUserCPReg,
+                tipo: TextInputType.number),
 
-              //Text field nombre
-              Padding(padding: EdgeInsets.all(10)),
-              Padding(
-                padding: const EdgeInsets.all(13),
-                child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
-                  controller: _campoUserNombreReg,  //Controlador para identificarlo
-                  decoration: const InputDecoration( 
-                    border: OutlineInputBorder(),
-                    labelText: "Nombre",
-                    labelStyle: TextStyle(fontSize: 18),
-                    ),
-                )),
+            Padding(
+              padding: const EdgeInsets.all(13),
+              child: TextField(
+                controller: _campoUserPassReg,
+                obscureText: _isSecurePassword,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: "Contraseña",
+                  labelStyle: const TextStyle(fontSize: 18),
+                  suffixIcon: togglePassword(),
+                ),
+              ),
+            ),
 
-              //Text field Telefono
-              Padding(padding: EdgeInsets.all(10)),
-              Padding(
-                padding: const EdgeInsets.all(13),
-                child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
-                  controller: _campoUserTelefReg, //Controlador para identificarlo
-                  keyboardType: TextInputType.numberWithOptions(), //Solo ofrece teclado numerico
-                  decoration: const InputDecoration( 
-                    border: OutlineInputBorder(),
-                    labelText: "Telefono",
-                    labelStyle: TextStyle(fontSize: 18),
-                    ),
-              )),
+            const SizedBox(height: 15),
 
-              Padding(padding: EdgeInsets.all(10)),
-              Padding(
-                padding: const EdgeInsets.all(13),
-                child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
-                  controller: _campoUserEdadReg, //Controlador para identificarlo
-                  keyboardType: TextInputType.numberWithOptions(), //Solo ofrece teclado numerico
-                  decoration: const InputDecoration( 
-                    border: OutlineInputBorder(),
-                    labelText: "Edad",
-                    labelStyle: TextStyle(fontSize: 18),
-                    ),
-              )),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 100),
+              child: CustomButton(
+                color: const Color.fromARGB(215, 163, 65, 122),
+                width: 170.0,
+                height: 35.0,
+                callback: () async {
+                  try {
+                    final res = await _supabaseAuth.signUp(
+                      email: _campoUserEmailReg.text,
+                      password: _campoUserPassReg.text,
+                    );
 
-              Padding(padding: EdgeInsets.all(10)),
-              Padding(
-                padding: const EdgeInsets.all(13),
-                child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
-                  controller: _campoUserCpReg, //Controlador para identificarlo
-                  keyboardType: TextInputType.numberWithOptions(), //Solo ofrece teclado numerico
-                  decoration: const InputDecoration( 
-                    border: OutlineInputBorder(),
-                    labelText: "Código Postal",
-                    labelStyle: TextStyle(fontSize: 18),
-                    ),
-              )),
-
-              Padding(padding: EdgeInsets.all(10)),
-              Padding(
-                padding: const EdgeInsets.all(13),
-                child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
-                  controller: _campoUserDireccionReg,  //Controlador para identificarlo
-                  decoration: const InputDecoration( 
-                    border: OutlineInputBorder(),
-                    labelText: "Dirección",
-                    labelStyle: TextStyle(fontSize: 18),
-                    ),
-                )),  
-
-              Padding(padding: EdgeInsets.all(10)),
-              Padding(
-                padding: const EdgeInsets.all(13),
-                child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
-                  controller: _campoUserPassReg, 
-                  obscureText: _isSecurePassword,
-                  //Controlador para identificarlo
-                  keyboardType: TextInputType.numberWithOptions(), //Solo ofrece teclado numerico
-                  decoration:  InputDecoration( 
-                    border: OutlineInputBorder(),
-                    labelText: "Contraseña",
-                    labelStyle: TextStyle(fontSize: 18),
-                    suffixIcon: togglePassword(),
-                    ),
-              )),
-    
-               Container(
-                  margin:EdgeInsets.only(left: 100, right: 100), //Esto lo separa del margen por la derecha y la izquierda
-                  child:
-                    CustomButton(  //MI BOTON PRECIOSO para vosotros chat
-                      color: Color.fromARGB(215, 163, 65, 122),
-                      width: 170.0, //Ancho
-                      height: 35.0, //Alto
-                      callback: () async {
-                        print("HOLA");
-                        try{
-                          final res = await _supabaseAuth.signUp(
-                          email: _campoUserEmailReg.text,
-                          password: _campoUserPassReg.text,
-                          );
-                          print(res);
-                          if (res.user != null) {
-                            log("Registrado");
-                            guardarDatosCambiarPantallaLogin();
+                    if (res.user != null) {
+                      log("Registrado con éxito");
+                      await insertarUsuario(res.user!.id);
+                      guardarDatosCambiarPantallaLogin();
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -253,3 +188,4 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
     );
   }
 }
+

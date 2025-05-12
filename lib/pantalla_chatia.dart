@@ -24,9 +24,18 @@ class _PantallaChatIAState extends State<PantallaChatIA> {
   //Añadiendo List tipo mensajes
   List<Mensaje> mensajes = [
     Mensaje(
-     texto: "texto", 
+     texto: "Hola! Soy Gemini, tu IA personal", 
      date: DateTime.now().subtract(Duration(minutes: 1)),
-     isSentByMe: false)
+     isSentByMe: false,
+    ),
+    Mensaje(
+    texto: "¿Que necesitas saber sobre tus mascotas?",
+    date: DateTime.now().subtract(Duration(minutes: 2)),
+    isSentByMe: false),
+    Mensaje(
+    texto: "Hola Gemini, necesito saber la siguiente cosa:",
+    date: DateTime.now().subtract(Duration(minutes: 1)),
+    isSentByMe: true),
   ];
 
   @override
@@ -51,7 +60,10 @@ class _PantallaChatIAState extends State<PantallaChatIA> {
     respuesta = response.text!.replaceAll(RegExp(r'\**'), '').toString();
     print(response.text);
     _campoPrompt.text = "";
-    setState(() {});
+    setState(() {
+      final mensajeIaNuevo = Mensaje(texto: respuesta, date: DateTime.now(), isSentByMe: false);
+      mensajes.add(mensajeIaNuevo);
+    });
   }
 
   
@@ -64,20 +76,29 @@ Widget build(BuildContext context) {
       child: Column(
         children: [
           const SizedBox(height: 20),
-          const Text(
-            "Habla con nuestra IA",
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            height: 120,
-            width: 120,
-            child: Image.asset("assets/logoLorena.png"),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Text("La respuesta es: $respuesta", style: TextStyle(fontSize: 18)),
-          ),
+          Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(
+          height: 60,
+          width: 60,
+          child: Image.asset("assets/logoLorena.png"),
+        ),
+        SizedBox(width: 10), // Espacio entre imagen y texto
+        Text(
+          "Habla con nuestra IA",
+          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+        ),
+      ],
+    ),
+
+    SizedBox(height: 10),
+          
+          //Padding(
+            //padding: const EdgeInsets.all(10),
+           // child: Text("La respuesta es: $respuesta", style: TextStyle(fontSize: 18)),
+         // ),
           Expanded(
             child: GroupedListView<Mensaje, DateTime>(
               elements: mensajes,
@@ -89,8 +110,8 @@ Widget build(BuildContext context) {
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: mensaje.isSentByMe ? Colors.blue[100] : Colors.grey[300],
-                      borderRadius: BorderRadius.circular(10),
+                      color: mensaje.isSentByMe ? const Color.fromARGB(255, 69, 118, 253) : const Color.fromARGB(255, 197, 197, 197),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(mensaje.texto),
                   ),
@@ -103,29 +124,49 @@ Widget build(BuildContext context) {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _campoPrompt,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: "Introduce lo que quieras saber",
+            child: Row(
+            children: [
+              // Campo de texto que se expande
+              Expanded(
+                child: TextField(
+                  controller: _campoPrompt,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Introduce lo que quieras saber",
+                  ),
+                ),
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: CustomButton(
-              color: Colors.transparent,
-              width: 100.0,
-              height: 40.0,
-              callback: () {
-                chatIA();
-              },
-              child: const Text(
-                "Enviar",
-                style: TextStyle(fontSize: 17, color: Color.fromARGB(255, 0, 89, 255)),
+              const SizedBox(width: 10), // Espacio entre campo y botón
+
+              // Botón "Enviar"
+              SizedBox(
+                width: 100,
+                height: 40,
+                child: CustomButton(
+                  color: Colors.transparent,
+                  callback: () {
+                    final mensajeNuevo = Mensaje(
+                      texto: _campoPrompt.text,
+                      date: DateTime.now(),
+                      isSentByMe: true,
+                    );
+                    setState(() {
+                      mensajes.add(mensajeNuevo);
+                    });
+                    chatIA();
+                  },
+                  child: const Text(
+                    "Enviar",
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Color.fromARGB(255, 0, 89, 255),
+                    ),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
+        ),
         ],
       ),
     ),
