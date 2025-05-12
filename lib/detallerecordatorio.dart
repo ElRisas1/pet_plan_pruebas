@@ -36,7 +36,7 @@ class DetalleRecordatorio extends StatelessWidget {
                   ),
                   const Center(
                     child: Text(
-                      "Reminder",
+                      "Recordatorio",
                       style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     ),
                   ),
