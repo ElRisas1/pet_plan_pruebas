@@ -2,7 +2,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 // Pantallas
 import 'package:pet_plan_pruebas/pantalla_ajustes.dart';
-import 'package:pet_plan_pruebas/pantalla_ayuda.dart';
 import 'package:pet_plan_pruebas/pantalla_chatia.dart';
 import 'package:pet_plan_pruebas/pantalla_mascota.dart';
 import 'package:pet_plan_pruebas/pantalla_perfil.dart';
@@ -24,16 +23,16 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
 
   // VARIABLES
   String? selectedItem = "Menu";  //item seleccionado, empieza siendo 'menu'
-  final String nombrePrueba = "chamaquito (Y esta vaina? JJAJAJAJ, vaya nombres os sacais guapos)"; //nombre de prueba para el usuario
+  //final String nombrePrueba = "chamaquito"; //nombre de prueba para el usuario
 
   // Listas //
   final List<String> mascotas = ["Firulais", "Luna", "Max"]; //Lista de mascotas para el carrusel
 
   List<String> recordatorios = ["saca a firulais a pasear", "Dale la pastilla a Luna", "Hoy le toca veterinario a Max" ];  //lista de recordatorios de prueba
 
-  List<String> menu = ["Menu","Ajustes", "Ayuda"]; //lista de items para el dropdown menu
+ // DROPDOWN MENU Q YA NO SE USA
 
-  
+  /* List<String> menu = ["Menu","Ajustes", "Ayuda"]; //lista de items para el dropdown menu
   /// Void para gestionar las selecciones
   void onMenuSelected(String? item) {
       if (item == null) return; // si es null
@@ -51,7 +50,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
           MaterialPageRoute(builder: (context) => PantallaAyuda(title: '', opcionesAjustes: '',)),
         );
       }
-    }
+    }*/
 
   @override
   Widget build(BuildContext context) {

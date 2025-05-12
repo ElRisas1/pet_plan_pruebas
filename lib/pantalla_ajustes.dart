@@ -18,8 +18,6 @@ class PantallaAjustes extends StatefulWidget {
 
 class _PantallaAjustesState extends State<PantallaAjustes> {
 
-  // Variables //
-
   // Listas //
 
   //Opciones de la lista principal.
