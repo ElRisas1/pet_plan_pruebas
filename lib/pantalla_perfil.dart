@@ -1,24 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-//Pantallas
+// Pantallas
 import 'package:pet_plan_pruebas/pantalla_edit_perfilUsu.dart';
 import 'package:pet_plan_pruebas/pantalla_mascota.dart';
 import 'package:pet_plan_pruebas/pantalla_agregar_mascota.dart';
+import 'package:pet_plan_pruebas/pantalla_login.dart';
 
 class PantallaPerfil extends StatelessWidget {
+  final List<String> mascotas = ["Firulais", "Luna", "Max"];
 
-  // Listas //
-    final List<String> mascotas = ["Firulais", "Luna", "Max"]; //Lista de mascotas para el carrusel
+  PantallaPerfil({super.key});
 
-    PantallaPerfil({super.key});
-
-  // MAPA DE MASCOTAS E IMAGENES //
-  Map<String, String> imagenesMascotas = {
+  final Map<String, String> imagenesMascotas = {
     "Firulais": "assets/Perro1.png",
     "Luna": "assets/gatobonito.jpg",
     "Max": "assets/GatoEgipcio.png",
   };
+
+  // Función para cerrar sesión
+  void _cerrarSesion(BuildContext context) async {
+    await Supabase.instance.client.auth.signOut();
+
+    if (!context.mounted) return;
+
+    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,13 +39,10 @@ class PantallaPerfil extends StatelessWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            SingleChildScrollView( // Hace la pantalla Scrolleable
+            SingleChildScrollView(
               child: Column(
                 children: [
-
-                  const SizedBox(height: 50), //Caja de la foto de perfil
-
-                  // Imagen de perfil
+                  const SizedBox(height: 50),
                   Container(
                     padding: const EdgeInsets.all(4),
                     decoration: const BoxDecoration(shape: BoxShape.circle),
@@ -50,16 +55,10 @@ class PantallaPerfil extends StatelessWidget {
                       ),
                     ),
                   ),
-
-                  // Cajas de info del perfil
                   const SizedBox(height: 10),
                   const Text('@perfilprueba1', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  const Text('Pedro ', style: TextStyle(fontSize: 20)),
-                 
-                  //Caja para la caja de prueba de texto
+                  const Text('Pedro', style: TextStyle(fontSize: 20)),
                   const SizedBox(height: 20),
-
-                  // Card para informacion del usuario
                   Center(
                     child: FractionallySizedBox(
                       widthFactor: 0.8,
@@ -71,24 +70,20 @@ class PantallaPerfil extends StatelessWidget {
                         child: const Padding(
                           padding: EdgeInsets.all(16),
                           child: Text(
-                            'Prueba de texto ',
+                            'Prueba de texto',
                             textAlign: TextAlign.center,
                           ),
                         ),
                       ),
                     ),
                   ),
-
-                  // Caja para boton de más informacion
                   const SizedBox(height: 15),
-
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                     onPressed: () {},
                     child: const Text('Más Información'),
                   ),
-
-                   // Caja para mascotas
+                  const SizedBox(height: 15),
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 20),
                     padding: const EdgeInsets.all(16),
@@ -100,11 +95,8 @@ class PantallaPerfil extends StatelessWidget {
                       children: [
                         const Text('Tus mascotas', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 10),
-
-                        // Carrusel
                         CarouselSlider(
                           items: [
-                            // Tarjetas de mascotas
                             ...mascotas.map((mascota) {
                               return GestureDetector(
                                 onTap: () {
@@ -135,8 +127,6 @@ class PantallaPerfil extends StatelessWidget {
                                 ),
                               );
                             }),
-
-                            // Tarjeta para añadir nueva mascota
                             GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -167,23 +157,16 @@ class PantallaPerfil extends StatelessWidget {
                       ],
                     ),
                   ),
-
-                   /*/ Caja para album de fotos
-                  const SizedBox(height: 20),
-                  PhotoSection(),*/
-
-                   // Caja para boton de cerrar sesion
                   const SizedBox(height: 20),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                    onPressed: () {},
+                    onPressed: () => _cerrarSesion(context),
                     child: const Text('Cerrar sesión'),
                   ),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
-
-            // Botón de edición (flotando encima con Positioned)
             Positioned(
               top: screenHeight * 0.05,
               right: screenWidth * 0.05,
@@ -196,128 +179,6 @@ class PantallaPerfil extends StatelessWidget {
   }
 }
 
-
-// Sección para mostrar las mascotas
-class PetsSection extends StatelessWidget {
-      
-  const PetsSection({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        children: [
-          const Text('Tus mascotas', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 10),
-
-          // Fila para mostrar mascotas y añadir una nueva
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              PetCard(name: 'pelusa', image: 'assets/Perro1.png'),
-              PetCard(name: 'tomusa', image: 'assets/gatobonito.jpg'),
-              AddPetCard(), // Tarjeta para añadir una nueva mascota
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// Componente para mostrar información de una mascota
-class PetCard extends StatelessWidget {
-  final String name;
-  final String image;
-
-  const PetCard({super.key, required this.name, required this.image});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 30,
-          backgroundImage: AssetImage(image),
-        ),
-        const SizedBox(height: 5),
-        Text(name),
-      ],
-    );
-  }
-}
-
-// Tarjeta para añadir una nueva mascota
-class AddPetCard extends StatelessWidget {
-
-  const AddPetCard({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 30,
-          backgroundColor: Colors.blue[100],
-          child: const Icon(Icons.add, color: Colors.green, size: 30),
-        ),
-        const SizedBox(height: 5),
-        const Text('Añade una mascota'),
-      ],
-    );
-  }
-}
-
-/*
-// Sección para mostrar y añadir fotos
-class PhotoSection extends StatelessWidget {
-
-  const PhotoSection({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Stack(
-    
-        children: [
-          Row(
-            children: const [
-              Icon(Icons.add_a_photo, color: Colors.blue),
-              SizedBox(width: 10),
-              Text('Añade una foto'),
-            ],
-          ),
-          const SizedBox(height: 10),
-
-          // Fila para mostrar imágenes
-          Row(
-            children: [
-              Image.asset('assets/Hamster.png', width: 80, height: 80, fit: BoxFit.cover),
-              const SizedBox(width: 10),
-              Image.asset('assets/images.png', width: 80, height: 80, fit: BoxFit.cover),
-              const SizedBox(width: 10),
-              Image.asset('assets/GatoEgipcio.png', width: 80, height: 80, fit: BoxFit.cover),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}*/
-
-//Botón de Edición del perfil
 class EditarPerfil extends StatelessWidget {
   const EditarPerfil({super.key});
 
@@ -341,3 +202,4 @@ class EditarPerfil extends StatelessWidget {
     );
   }
 }
+
