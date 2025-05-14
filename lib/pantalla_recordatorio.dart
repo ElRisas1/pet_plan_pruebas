@@ -26,7 +26,20 @@ class _PantallaRecordatorioState extends State<PantallaRecordatorio> {
   Future<void> _cargarRecordatorios() async {
     try {
       final supabase = Supabase.instance.client;
-      final data = await supabase.from('recordatorios').select().order('Fecha');
+      final user = supabase.auth.currentUser;
+
+      if (user == null) {
+        setState(() {
+          cargando = false;
+        });
+        return;
+      }
+
+      final data = await supabase
+          .from('recordatorios')
+          .select()
+          .eq('user_id', user.id)
+          .order('Fecha');
 
       setState(() {
         recordatorios = List<Map<String, dynamic>>.from(data);
@@ -47,7 +60,6 @@ class _PantallaRecordatorioState extends State<PantallaRecordatorio> {
       body: SafeArea(
         child: Column(
           children: [
-            // Encabezado
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
               child: Row(
@@ -64,8 +76,6 @@ class _PantallaRecordatorioState extends State<PantallaRecordatorio> {
                 ],
               ),
             ),
-
-            // Lista de recordatorios
             Expanded(
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -111,7 +121,7 @@ class _PantallaRecordatorioState extends State<PantallaRecordatorio> {
                                       ),
                                     ).then((eliminado) {
                                       if (eliminado == true) {
-                                        _cargarRecordatorios(); // Recarga si se eliminó
+                                        _cargarRecordatorios();
                                       }
                                     });
                                   },
@@ -121,8 +131,6 @@ class _PantallaRecordatorioState extends State<PantallaRecordatorio> {
                           ),
               ),
             ),
-
-            // Botón crear
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
@@ -132,7 +140,7 @@ class _PantallaRecordatorioState extends State<PantallaRecordatorio> {
                     builder: (context) => const PantallaNuevoRecordatorio(title: "Nuevo recordatorio"),
                   ),
                 );
-                _cargarRecordatorios(); // Recarga al volver
+                _cargarRecordatorios();
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,

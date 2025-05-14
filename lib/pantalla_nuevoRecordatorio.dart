@@ -11,11 +11,9 @@ class PantallaNuevoRecordatorio extends StatefulWidget {
       _PantallaNuevoRecordatorioState();
 }
 
-class _PantallaNuevoRecordatorioState
-    extends State<PantallaNuevoRecordatorio> {
+class _PantallaNuevoRecordatorioState extends State<PantallaNuevoRecordatorio> {
   final TextEditingController motivoController = TextEditingController();
   final TextEditingController mascotaController = TextEditingController();
-
   DateTime? fechaHoraSeleccionada;
 
   Future<void> _seleccionarFechaYHora(BuildContext context) async {
@@ -33,16 +31,14 @@ class _PantallaNuevoRecordatorioState
       );
 
       if (hora != null) {
-        final DateTime fechaHora = DateTime(
-          fecha.year,
-          fecha.month,
-          fecha.day,
-          hora.hour,
-          hora.minute,
-        );
-
         setState(() {
-          fechaHoraSeleccionada = fechaHora;
+          fechaHoraSeleccionada = DateTime(
+            fecha.year,
+            fecha.month,
+            fecha.day,
+            hora.hour,
+            hora.minute,
+          );
         });
       }
     }
@@ -58,9 +54,11 @@ class _PantallaNuevoRecordatorioState
   }
 
   Future<void> _guardarEnSupabase() async {
-    final motivo = motivoController.text;
-    final mascota = mascotaController.text;
+    final motivo = motivoController.text.trim();
+    final mascota = mascotaController.text.trim();
     final fechaHora = fechaHoraSeleccionada;
+    final supabase = Supabase.instance.client;
+    final user = supabase.auth.currentUser;
 
     if (motivo.isEmpty || mascota.isEmpty || fechaHora == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -69,13 +67,19 @@ class _PantallaNuevoRecordatorioState
       return;
     }
 
-    try {
-      final supabase = Supabase.instance.client;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Debes iniciar sesión para guardar.")),
+      );
+      return;
+    }
 
+    try {
       await supabase.from('recordatorios').insert({
         'Nombre': motivo,
         'Fecha': fechaHora.toIso8601String(),
         'Notas': mascota,
+        'user_id': user.id, // 👈 Campo obligatorio con RLS activado
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -101,7 +105,6 @@ class _PantallaNuevoRecordatorioState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Motivo
             TextField(
               controller: motivoController,
               decoration: InputDecoration(
@@ -112,8 +115,6 @@ class _PantallaNuevoRecordatorioState
               ),
             ),
             SizedBox(height: 20),
-
-            // Selector de fecha y hora
             GestureDetector(
               onTap: () => _seleccionarFechaYHora(context),
               child: Container(
@@ -132,8 +133,6 @@ class _PantallaNuevoRecordatorioState
               ),
             ),
             SizedBox(height: 20),
-
-            // Mascota
             TextField(
               controller: mascotaController,
               decoration: InputDecoration(
@@ -144,8 +143,6 @@ class _PantallaNuevoRecordatorioState
               ),
             ),
             SizedBox(height: 40),
-
-            // Botón guardar
             ElevatedButton(
               onPressed: _guardarEnSupabase,
               style: ElevatedButton.styleFrom(
@@ -161,3 +158,4 @@ class _PantallaNuevoRecordatorioState
     );
   }
 }
+
