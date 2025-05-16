@@ -23,7 +23,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'PetPlan',
-      home: PantallaLogin(title: "Pantalla p"),
+      home: PantallaPrincipal(title: "Pantalla p"),
     );
   }
 }
