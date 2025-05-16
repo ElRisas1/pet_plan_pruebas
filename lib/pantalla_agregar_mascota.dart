@@ -66,64 +66,80 @@ class _PantallaAgregarMascotaState extends State<PantallaAgregarMascota> {
                   ),
                 ),
               ),
-              const SizedBox(height: 30),
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 30),
+                      const Text("Nombre de la mascota", style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextFormField(
+                        controller: _nombreController,
+                        decoration: const InputDecoration(hintText: 'Ej: Firulais'),
+                        validator: (value) => value == null || value.isEmpty ? 'Ingresa un nombre' : null,
+                      ),
+                      const SizedBox(height: 20),
 
-              const Text("Nombre de la mascota", style: TextStyle(fontWeight: FontWeight.bold)),
-              TextFormField(
-                controller: _nombreController,
-                decoration: const InputDecoration(hintText: 'Ej: Firulais'),
-                validator: (value) => value == null || value.isEmpty ? 'Ingresa un nombre' : null,
-              ),
-              const SizedBox(height: 20),
+                      const Text("Tipo de mascota", style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextFormField(
+                        controller: _tipoController,
+                        decoration: const InputDecoration(hintText: 'Ej: Perro, Gato'),
+                      ),
+                      const SizedBox(height: 20),
 
-              const Text("Tipo de mascota", style: TextStyle(fontWeight: FontWeight.bold)),
-              TextFormField(
-                controller: _tipoController,
-                decoration: const InputDecoration(hintText: 'Ej: Perro, Gato'),
-              ),
-              const SizedBox(height: 20),
+                      const Text("Fecha de nacimiento", style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextFormField(
+                        controller: _fechaNacimientoController,
+                        decoration: const InputDecoration(hintText: 'DD/MM/AAAA'),
+                      ),
+                      const SizedBox(height: 40),
 
-              const Text("Fecha de nacimiento", style: TextStyle(fontWeight: FontWeight.bold)),
-              TextFormField(
-                controller: _fechaNacimientoController,
-                decoration: const InputDecoration(hintText: 'DD/MM/AAAA'),
-              ),
-              const SizedBox(height: 40),
+                      const Text("Numero del Chip", style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextFormField(
+                        controller: _numeroChipController,
+                        decoration: const InputDecoration(hintText: 'Introduce el numero'),
+                      ),
+                      const SizedBox(height: 40),
 
-              const Text("Numero del Chip", style: TextStyle(fontWeight: FontWeight.bold)),
-              TextFormField(
-                controller: _numeroChipController,
-                decoration: const InputDecoration(hintText: 'Introduce el numero'),
-              ),
-              const SizedBox(height: 40),
+                      const Text("Color del Pelo", style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextFormField(
+                        controller: _colorPelajeController,
+                        decoration: const InputDecoration(hintText: 'Introduce el Color de tu mascota'),
+                      ),
+                      const SizedBox(height: 40),
 
-              const Text("Color del Pelo", style: TextStyle(fontWeight: FontWeight.bold)),
-              TextFormField(
-                controller: _colorPelajeController,
-                decoration: const InputDecoration(hintText: 'Introduce el Color de tu mascota'),
-              ),
-              const SizedBox(height: 40),
+                      const Text("Raza", style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextFormField(
+                        controller: _razaController,
+                        decoration: const InputDecoration(hintText: 'Introduce la Raza de tu mascota'),
+                      ),
+                      const SizedBox(height: 40),
 
-              const Text("Raza", style: TextStyle(fontWeight: FontWeight.bold)),
-              TextFormField(
-                controller: _razaController,
-                decoration: const InputDecoration(hintText: 'Introduce la Raza de tu mascota'),
-              ),
-              const SizedBox(height: 40),
+                      const Text("Informacion", style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextFormField(
+                        controller: _informacionExtraController,
+                        decoration: const InputDecoration(hintText: 'Cuentanos algo sobre tu mascota'),
+                      ),
+                      const SizedBox(height: 40),
 
-              const Text("Informacion", style: TextStyle(fontWeight: FontWeight.bold)),
-              TextFormField(
-                controller: _informacionExtraController,
-                decoration: const InputDecoration(hintText: 'Cuentanos algo sobre tu mascota'),
+                      const Text("Veterinario", style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextFormField(
+                        controller: _datosVeterinarioController,
+                        decoration: const InputDecoration(hintText: 'Datos de tu veterinario de confianza'),
+                      ),
+                      const SizedBox(height: 40),
+                    ]
+                  )
+                )
               ),
-              const SizedBox(height: 40),
-
-              const Text("Veterinario", style: TextStyle(fontWeight: FontWeight.bold)),
-              TextFormField(
-                controller: _datosVeterinarioController,
-                decoration: const InputDecoration(hintText: 'Datos de tu veterinario de confianza'),
-              ),
-              const SizedBox(height: 40),
+              
 
               //Boton de guardar.
               Center(
