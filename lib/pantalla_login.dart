@@ -4,6 +4,7 @@ import 'package:pet_plan_pruebas/pantalla_registro.dart';
 import 'package:pet_plan_pruebas/src/widgets/custom_button.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:pet_plan_pruebas/pantalla_reset_pass.dart';
+import 'package:pet_plan_pruebas/pantalla_perfil.dart';
 
 
 class PantallaLogin extends StatefulWidget {

@@ -3,6 +3,8 @@ import 'package:pet_plan_pruebas/pantalla_ayuda.dart';
 import 'package:pet_plan_pruebas/pantalla_chatia.dart';
 import 'package:pet_plan_pruebas/pantalla_main.dart';
 import 'package:pet_plan_pruebas/pantalla_perfil.dart';
+import 'package:pet_plan_pruebas/pantalla_login.dart';
+
 // Suponemos que las siguientes pantallas existen:
 //import 'package:pet_plan_pruebas/pantalla_privacidad.dart';
 //import 'package:pet_plan_pruebas/pantalla_logout.dart';
