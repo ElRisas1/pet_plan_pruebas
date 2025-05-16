@@ -17,7 +17,12 @@ class _PantallaAgregarMascotaState extends State<PantallaAgregarMascota> {
   final _formKey = GlobalKey<FormState>(); // Clave para validar el formulario.
   final TextEditingController _nombreController = TextEditingController(); // Para leer el campo "nombre".
   final TextEditingController _tipoController = TextEditingController();   // Para leer el campo "tipo de mascota".
-  final TextEditingController _fechaNacimientoController = TextEditingController(); // Para leer "fecha de nacimiento".
+  final TextEditingController _fechaNacimientoController = TextEditingController();// Para leer "fecha de nacimiento".
+  final TextEditingController _numeroChipController = TextEditingController();  //Para leer "numero chip"
+  final TextEditingController _colorPelajeController = TextEditingController();  //Para leer "color Pelaje"
+  final TextEditingController _razaController = TextEditingController();  //Para leer "raza"
+  final TextEditingController _informacionExtraController = TextEditingController();  //Para leer "Informacion extra"
+  final TextEditingController _datosVeterinarioController = TextEditingController();  //Para leer "Informacion extra"
 
   File? _imagenMascota; // Variable que guardará la imagen seleccionada.
 
@@ -82,6 +87,41 @@ class _PantallaAgregarMascotaState extends State<PantallaAgregarMascota> {
               TextFormField(
                 controller: _fechaNacimientoController,
                 decoration: const InputDecoration(hintText: 'DD/MM/AAAA'),
+              ),
+              const SizedBox(height: 40),
+
+              const Text("Numero del Chip", style: TextStyle(fontWeight: FontWeight.bold)),
+              TextFormField(
+                controller: _numeroChipController,
+                decoration: const InputDecoration(hintText: 'Introduce el numero'),
+              ),
+              const SizedBox(height: 40),
+
+              const Text("Color del Pelo", style: TextStyle(fontWeight: FontWeight.bold)),
+              TextFormField(
+                controller: _colorPelajeController,
+                decoration: const InputDecoration(hintText: 'Introduce el Color de tu mascota'),
+              ),
+              const SizedBox(height: 40),
+
+              const Text("Raza", style: TextStyle(fontWeight: FontWeight.bold)),
+              TextFormField(
+                controller: _razaController,
+                decoration: const InputDecoration(hintText: 'Introduce la Raza de tu mascota'),
+              ),
+              const SizedBox(height: 40),
+
+              const Text("Informacion", style: TextStyle(fontWeight: FontWeight.bold)),
+              TextFormField(
+                controller: _informacionExtraController,
+                decoration: const InputDecoration(hintText: 'Cuentanos algo sobre tu mascota'),
+              ),
+              const SizedBox(height: 40),
+
+              const Text("Veterinario", style: TextStyle(fontWeight: FontWeight.bold)),
+              TextFormField(
+                controller: _datosVeterinarioController,
+                decoration: const InputDecoration(hintText: 'Datos de tu veterinario de confianza'),
               ),
               const SizedBox(height: 40),
 
