@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 //Pantallas
 import 'package:pet_plan_pruebas/pantallaQR.dart';
+import 'package:pet_plan_pruebas/pantalla_edit_perfilUsu.dart';
+import 'package:pet_plan_pruebas/pantalla_editar_mascota.dart';
 import 'package:pet_plan_pruebas/pantalla_recordatorio.dart';
 import 'package:pet_plan_pruebas/pantalla_nuevoRecordatorio.dart';
 
@@ -39,7 +41,14 @@ class PantallaMascota extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _titulo(nombreMascota),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _titulo(nombreMascota),
+                    _editarPerfil(context),
+                  ],
+                ),
                 const SizedBox(height: 20),
                 _imagenPerfil(imagenMascota),
                 const SizedBox(height: 30),
@@ -89,6 +98,25 @@ class PantallaMascota extends StatelessWidget {
       ),
     );
   }
+
+Widget _editarPerfil(BuildContext context) {
+  return Material(
+    color: Colors.white,
+    shape: const CircleBorder(),
+    elevation: 5,
+    child: IconButton(
+      icon: const Icon(Icons.edit, size: 40, color: Colors.blueGrey),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PantallaEditarMascota(title: '', nombreMascota: '',),
+          ),
+        );
+      },
+    ),
+  );
+}
 
   Widget _infoMascota(String nombre) {
     return Container(
