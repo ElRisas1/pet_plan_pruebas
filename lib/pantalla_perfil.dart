@@ -67,6 +67,7 @@ class PantallaPerfil extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         color: Colors.white,
+                        elevation: 6, 
                         child: const Padding(
                           padding: EdgeInsets.all(16),
                           child: Text(
@@ -75,11 +76,15 @@ class PantallaPerfil extends StatelessWidget {
                           ),
                         ),
                       ),
+
                     ),
                   ),
                   const SizedBox(height: 15),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      elevation: 6,
+                    ),
                     onPressed: () {},
                     child: const Text('Más Información'),
                   ),
@@ -90,7 +95,15 @@ class PantallaPerfil extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 8,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
                     ),
+
                     child: Column(
                       children: [
                         const Text('Tus mascotas', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
@@ -159,7 +172,10 @@ class PantallaPerfil extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      elevation: 6,
+                    ),
                     onPressed: () => _cerrarSesion(context),
                     child: const Text('Cerrar sesión'),
                   ),
@@ -179,6 +195,7 @@ class PantallaPerfil extends StatelessWidget {
   }
 }
 
+//Class para boton de Editar perfil.
 class EditarPerfil extends StatelessWidget {
   const EditarPerfil({super.key});
 
