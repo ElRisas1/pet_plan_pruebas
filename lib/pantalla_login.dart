@@ -105,11 +105,21 @@ class _PantallaLoginState extends State<PantallaLogin> {
               SizedBox(
                 height: 200.0,
                 width: 200.0,
-                child: Image.asset("assets/logoLorena.png")
+                child: Image.asset("assets/pataPerro.png")
 
               ),
-              Padding(padding: EdgeInsets.all(60)),
-              const Text("    -Accede a tu cuenta- \n\n   ¿Aún no tienes cuenta?", style: TextStyle(fontSize: 17, color: Color.fromARGB(218, 0, 0, 0))),
+              Padding(padding: EdgeInsets.all(30),
+                child: Column(mainAxisAlignment: MainAxisAlignment.center, 
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  
+                  children: [
+                    const Text("Log in", style: TextStyle(fontSize: 27, color: Color.fromARGB(218, 0, 0, 0))),
+                    Padding(padding: EdgeInsets.all(40))
+
+                  ],
+                ),
+              ),
+              
               
               Container(
                   margin:EdgeInsets.only(left: 100, right: 100), //Esto lo separa del margen por la derecha y la izquierda
@@ -126,21 +136,8 @@ class _PantallaLoginState extends State<PantallaLogin> {
                     ),
                 ),
 
-               Container(
-                  margin:EdgeInsets.only(left: 100, right: 100), //Esto lo separa del margen por la derecha y la izquierda
-                  child:
-                    CustomButton( 
-                       //MI BOTON PRECIOSO para vosotros chat
-                      color: Color.fromARGB(0, 0, 0, 0),
-                      width: 300.0, //Ancho
-                      height: 30.0, //Alto
-                      callback: () {
-                         Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PantallaResetPass(title: "PantallaRecuperarContraseña")));
-                      },
-                      child: Text("¿Has olvidado la contraseña?", style: TextStyle(fontSize: 17, color: const Color.fromARGB(157, 74, 76, 78), fontStyle: FontStyle.italic)), //Aqui se podria poner una foto
-                    ),
-                ),
-              Padding(padding: EdgeInsets.all(20)),
+              
+              
               Padding(
                 padding: const EdgeInsets.all(13),
                 child: TextField(  //Este es el campo de texto en el que se van introduciendo el correo del usuario 
@@ -166,6 +163,9 @@ class _PantallaLoginState extends State<PantallaLogin> {
                   ),
                      
                 )),
+
+                Padding(padding: EdgeInsets.all(40)),
+
                 Container(
                   margin:EdgeInsets.only(left: 100, right: 100), //Esto lo separa del margen por la derecha y la izquierda
                   child:
@@ -178,6 +178,21 @@ class _PantallaLoginState extends State<PantallaLogin> {
                       },
                       elevation: 100.0, //Esto añade algo de sombra a la caja elevandolo hacia arriba un poco
                       child: Text("Entrar", style: TextStyle(fontSize: 17, color: const Color.fromARGB(255, 255, 255, 255))), //Aqui se podria poner una foto
+                    ),
+                ),
+
+                Container(//BOTON FORGOT PASSWORD
+                  margin:EdgeInsets.only(left: 100, right: 100), //Esto lo separa del margen por la derecha y la izquierda
+                  child:
+                    CustomButton( 
+                       //MI BOTON PRECIOSO para vosotros chat
+                      color: Color.fromARGB(0, 0, 0, 0),
+                      width: 300.0, //Ancho
+                      height: 30.0, //Alto
+                      callback: () {
+                         Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PantallaResetPass(title: "PantallaRecuperarContraseña")));
+                      },
+                      child: Text("¿Has olvidado la contraseña?", style: TextStyle(fontSize: 15, color: const Color.fromARGB(157, 74, 76, 78), fontStyle: FontStyle.italic)), //Aqui se podria poner una foto
                     ),
                 ),
               //ElevatedButton(onPressed: () => print("hola"), child: SizedBox(width: 120, height: 35, child: Center(child: Text("Entrar", style: TextStyle(fontSize: 16, color: const Color.fromARGB(255, 0, 0, 0))) )) )
