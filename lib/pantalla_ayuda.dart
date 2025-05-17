@@ -59,7 +59,7 @@ class _PantallaAyudaState extends State<PantallaAyuda> {
                   ),
                   SizedBox(height: 20),
                   Text(
-                    "¿Qué animales premite la aplicación?",
+                    "¿Qué animales permite la aplicación?",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   Text("Respuesta: Perros y Gatos."),
@@ -79,7 +79,7 @@ class _PantallaAyudaState extends State<PantallaAyuda> {
           // Sección de contacto
           const Center(
             child: Text(
-              "Contact Us!",
+              "Contactanos!",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
@@ -97,7 +97,7 @@ class _PantallaAyudaState extends State<PantallaAyuda> {
               child: Column(
                 children: [
                   const Text(
-                    "Encuentranos y escribenos!",
+                    "Encuentranos y escribenos tus dudas!",
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 15),
