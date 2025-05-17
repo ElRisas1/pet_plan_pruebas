@@ -28,24 +28,32 @@ class PantallaMascota extends StatelessWidget {
       ),
       body: Container(
         color: const Color.fromARGB(248, 144, 177, 235),
+        width: double.infinity,
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              _titulo(nombreMascota),
-              const SizedBox(height: 20),
-              _imagenPerfil(imagenMascota),
-              const SizedBox(height: 30),
-              _infoMascota(nombreMascota),
-              const SizedBox(height: 20),
-              _botonQR(context),
-              const SizedBox(height: 30),
-              _tituloSeccion("Recordatorios"),
-              const SizedBox(height: 10),
-              _listaRecordatorios(context, recordatorios),
-              const SizedBox(height: 20),
-              _botonNuevoRecordatorio(context),
-            ],
+          child: Container(
+            // Este Container asegura que la altura mínima ocupe toda la pantalla
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height - kToolbarHeight - MediaQuery.of(context).padding.top,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _titulo(nombreMascota),
+                const SizedBox(height: 20),
+                _imagenPerfil(imagenMascota),
+                const SizedBox(height: 30),
+                _infoMascota(nombreMascota),
+                const SizedBox(height: 20),
+                _botonQR(context),
+                const SizedBox(height: 30),
+                _tituloSeccion("Recordatorios"),
+                const SizedBox(height: 10),
+                _listaRecordatorios(context, recordatorios),
+                const SizedBox(height: 20),
+                _botonNuevoRecordatorio(context),
+              ],
+            ),
           ),
         ),
       ),
