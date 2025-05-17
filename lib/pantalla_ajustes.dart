@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pet_plan_pruebas/pantalla_ayuda.dart';
 import 'package:pet_plan_pruebas/pantalla_perfil.dart';
+import 'package:pet_plan_pruebas/pantalla_policies.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PantallaAjustes extends StatefulWidget {
@@ -19,7 +20,7 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
     ),
     _AjusteItem(
       nombre: "Política de privacidad",
-      destino: PantallaPerfil(),
+      destino: PantallaPolicies(nombreMascota: '', title: '',),
     ),
     _AjusteItem(
       nombre: "Cerrar sesión",
