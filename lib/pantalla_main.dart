@@ -21,9 +21,10 @@ class PantallaPrincipal extends StatefulWidget {
 }
 
 class _PantallaPrincipalState extends State<PantallaPrincipal> {
-  final List<String> mascotas = ["Firulais", "Luna", "Max"];
-  List<Map<String, dynamic>> recordatorios = [];
-  bool cargandoRecordatorios = true;
+  
+  final List<String> mascotas = ["Firulais", "Luna", "Max"]; //Lista de mascotas
+  List<Map<String, dynamic>> recordatorios = [];  //Lista de recordatorios
+  bool cargandoRecordatorios = true;  
 
   Map<String, String> imagenesMascotas = {
     "Firulais": "assets/Perro1.png",
@@ -199,7 +200,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                           builder: (context) => const PantallaRecordatorio(recordatorio: ""),
                         ),
                       );
-                      _cargarRecordatorios(); // 👈 se actualiza al volver
+                      _cargarRecordatorios(); // se actualiza al volver
                     },
                   ),
                 ),
@@ -245,7 +246,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => DetalleRecordatorio(
-                                      id: rec['Id_recor'], // ✅ ESTA LÍNEA ES CLAVE
+                                      id: rec['Id_recor'], //  ESTA LÍNEA ES CLAVE
                                       nombre: rec['Nombre'],
                                       fecha: DateFormat('dd/MM/yyyy').format(fecha),
                                       hora: DateFormat('HH:mm').format(fecha),
@@ -254,7 +255,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                                           ),
                                             ).then((eliminado) {
                                   if (eliminado == true) {
-                                    _cargarRecordatorios(); // 🔄 Recarga si se eliminó
+                                    _cargarRecordatorios(); // Recarga si se eliminó
                                   }
                                 });
                               },
