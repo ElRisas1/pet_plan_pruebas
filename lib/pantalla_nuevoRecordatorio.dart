@@ -79,7 +79,7 @@ class _PantallaNuevoRecordatorioState extends State<PantallaNuevoRecordatorio> {
         'Nombre': motivo,
         'Fecha': fechaHora.toIso8601String(),
         'Notas': mascota,
-        'user_id': user.id, // 👈 Campo obligatorio con RLS activado
+        'user_id': user.id, //Campo obligatorio con RLS activado
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -97,6 +97,10 @@ class _PantallaNuevoRecordatorioState extends State<PantallaNuevoRecordatorio> {
 
   @override
   Widget build(BuildContext context) {
+
+    List<String> mascotas = ['Luna', 'Max', 'Toby']; // ejemplo
+    String? mascotaSeleccionada;
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(248, 238, 220, 138),
       appBar: AppBar(title: Text(widget.title)),
@@ -132,9 +136,22 @@ class _PantallaNuevoRecordatorioState extends State<PantallaNuevoRecordatorio> {
                 ),
               ),
             ),
+            
+            //Menu para escoger mascota para el recordatorio.
             SizedBox(height: 20),
-            TextField(
-              controller: mascotaController,
+            DropdownButtonFormField<String>(
+              value: mascotaSeleccionada,
+              items: mascotas.map((String mascota) {
+                return DropdownMenuItem<String>(
+                  value: mascota,
+                  child: Text(mascota),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  mascotaSeleccionada = newValue;
+                });
+              },
               decoration: InputDecoration(
                 labelText: 'Mascota involucrada',
                 border: OutlineInputBorder(),
@@ -142,6 +159,7 @@ class _PantallaNuevoRecordatorioState extends State<PantallaNuevoRecordatorio> {
                 fillColor: Colors.white,
               ),
             ),
+
             SizedBox(height: 40),
             ElevatedButton(
               onPressed: _guardarEnSupabase,
