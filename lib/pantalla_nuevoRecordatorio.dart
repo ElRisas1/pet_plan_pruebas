@@ -98,7 +98,8 @@ class _PantallaNuevoRecordatorioState extends State<PantallaNuevoRecordatorio> {
   @override
   Widget build(BuildContext context) {
 
-    List<String> mascotas = ['Luna', 'Max', 'Toby']; // ejemplo
+    //Lista de mascotas
+    List<String> mascotas = ['Firulais', 'Luna', 'Max']; 
     String? mascotaSeleccionada;
 
     return Scaffold(
@@ -136,7 +137,7 @@ class _PantallaNuevoRecordatorioState extends State<PantallaNuevoRecordatorio> {
                 ),
               ),
             ),
-            
+
             //Menu para escoger mascota para el recordatorio.
             SizedBox(height: 20),
             DropdownButtonFormField<String>(
