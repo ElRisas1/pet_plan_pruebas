@@ -52,7 +52,7 @@ class _PantallaEditarMascotaState extends State<PantallaEditarMascota> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Text(
-                  "Edit your Pet",
+                  "Edita tu mascota",
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 20),
@@ -139,7 +139,7 @@ class _PantallaEditarMascotaState extends State<PantallaEditarMascota> {
                       );
                     },
                     child: const Text(
-                      "Save",
+                      "Guardar",
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
