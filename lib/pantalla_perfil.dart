@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:pet_plan_pruebas/pantalla_info_usu.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 // Pantallas
@@ -85,7 +86,11 @@ class PantallaPerfil extends StatelessWidget {
                       backgroundColor: Colors.green,
                       elevation: 6,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => PantallaInfoUsu(title: '')));
+                    },
                     child: const Text('Más Información'),
                   ),
                   const SizedBox(height: 15),
