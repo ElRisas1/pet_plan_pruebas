@@ -29,7 +29,7 @@ class _CustomButtonState extends State<CustomButton> {
       width: widget.width,
       margin: EdgeInsets.only(top: widget.marginTop ?? 0, bottom: widget.marginBottom ?? 0),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.0), // aqui hay una verificacion: "widget.borderRadius == null ? Constants.radius : widget.borderRadius!" pero no se usa porque no disponemos del archivo constants
+          borderRadius: BorderRadius.circular(50.0), // aqui hay una verificacion: "widget.borderRadius == null ? Constants.radius : widget.borderRadius!" pero no se usa porque no disponemos del archivo constants
           color: widget.color,
           boxShadow: [
             BoxShadow(
