@@ -182,8 +182,8 @@ class _PantallaLoginState extends State<PantallaLogin> {
                 
                 Padding(padding: EdgeInsets.all(20)),
                 Container(
-                  margin:EdgeInsets.only(left: 75, right: 40), //Esto lo separa del margen por la derecha y la izquierda
-                  child:Row(
+                  margin:EdgeInsets.only(left: 40, right: 40), //Esto lo separa del margen por la derecha y la izquierda
+                  child:Row(mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text("¿Aún no tienes cuenta? ", style: TextStyle(fontSize: 17, color: const Color.fromARGB(255, 0, 0, 0), fontStyle: FontStyle.italic)),
 
