@@ -133,9 +133,11 @@ Widget _editarPerfil(BuildContext context) {
           )
         ],
       ),
-      child: Text(
-        "Aquí irá la información de $nombre",
-        style: const TextStyle(fontSize: 18),
+      child: Column(children: [
+        Text("Aquí irá la información de $nombre",
+        style: const TextStyle(fontSize: 18),)
+      ],
+        
       ),
     );
   }
@@ -144,7 +146,7 @@ Widget _editarPerfil(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
         Navigator.push(context,
-          MaterialPageRoute(builder: (context) => PantallaQR(title: "Pantalla QR", nombreMascota: nombreMascota)),
+          MaterialPageRoute(builder: (context) => PantallaQR(nombreMascota: nombreMascota)),
         );
       },
       style: ElevatedButton.styleFrom(
