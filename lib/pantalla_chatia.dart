@@ -80,10 +80,8 @@ Widget build(BuildContext context) {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(
-          height: 60,
-          width: 60,
-          child: Image.asset("assets/logoLorena.png"),
+        CircleAvatar(
+         backgroundImage: AssetImage("assets/logoLorena.png"),
         ),
         SizedBox(width: 10), // Espacio entre imagen y texto
         Text(
