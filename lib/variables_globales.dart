@@ -37,10 +37,7 @@ class SharedPreferencesDemoState {
   late Future<int> _counter; //Lo de Future es que es una variable incompleta pero que se llenará en algun momento
 }
 
-
-
-
-
+//-------------------------------------------------------------------
 
 
 

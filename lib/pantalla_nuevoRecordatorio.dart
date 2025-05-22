@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+
 class PantallaNuevoRecordatorio extends StatefulWidget {
   final String title;
 
@@ -15,6 +16,9 @@ class _PantallaNuevoRecordatorioState extends State<PantallaNuevoRecordatorio> {
   final TextEditingController motivoController = TextEditingController();
   final TextEditingController mascotaController = TextEditingController();
   DateTime? fechaHoraSeleccionada;
+  
+  
+  
 
   Future<void> _seleccionarFechaYHora(BuildContext context) async {
     final DateTime? fecha = await showDatePicker(
@@ -94,6 +98,8 @@ class _PantallaNuevoRecordatorioState extends State<PantallaNuevoRecordatorio> {
       );
     }
   }
+  //Notificaciones//
+  
 
   @override
   Widget build(BuildContext context) {
