@@ -34,7 +34,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: 'PetPlan',
       debugShowCheckedModeBanner: false,
-      initialRoute: '/main',
+      initialRoute: '/login',
       routes: {
         '/login': (context) => const PantallaLogin(title: 'Pantalla Login'),
         '/main': (context) => const PantallaPrincipal(title: 'PantallaPrincipal'),

@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'pantalla_nuevoRecordatorio.dart';
 import 'detalleRecordatorio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class PantallaRecordatorio extends StatefulWidget {
   final String recordatorio;
@@ -28,6 +30,10 @@ class _PantallaRecordatorioState extends State<PantallaRecordatorio> {
       final supabase = Supabase.instance.client;
       final user = supabase.auth.currentUser;
 
+      //vamos a cargar los recordatorios tambien desde la parte LOCAL que hemos guardado con el SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      final datos = prefs.getStringList('recordatorios') ?? [];
+
       if (user == null) {
         setState(() {
           cargando = false;
@@ -42,7 +48,14 @@ class _PantallaRecordatorioState extends State<PantallaRecordatorio> {
           .order('Fecha');
 
       setState(() {
-        recordatorios = List<Map<String, dynamic>>.from(data);
+        //esto carga los recordatorios que saca del supabase de forma Online Lo comento por ahora para probarlos
+        //recordatorios = List<Map<String, dynamic>>.from(data);
+
+        //El mio lo carga desde los archivos guardados en local
+        recordatorios = datos
+        .map((e) => jsonDecode(e) as Map<String, dynamic>)
+        .toList();
+
         cargando = false;
       });
     } catch (e) {

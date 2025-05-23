@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
+import '../notification_service.dart';
 
 class PantallaNuevoRecordatorio extends StatefulWidget {
   final String title;
@@ -9,13 +9,14 @@ class PantallaNuevoRecordatorio extends StatefulWidget {
 
   @override
   _PantallaNuevoRecordatorioState createState() =>
-      _PantallaNuevoRecordatorioState();
+    _PantallaNuevoRecordatorioState();
 }
 
 class _PantallaNuevoRecordatorioState extends State<PantallaNuevoRecordatorio> {
   final TextEditingController motivoController = TextEditingController();
   final TextEditingController mascotaController = TextEditingController();
   DateTime? fechaHoraSeleccionada;
+  //Variables notificaciones
   
   
   
@@ -86,7 +87,10 @@ class _PantallaNuevoRecordatorioState extends State<PantallaNuevoRecordatorio> {
         'user_id': user.id, //Campo obligatorio con RLS activado
       });
 
+      crearNotificaciones(); //AQUI es cuando todo ha ido bien y creamos la notificación
+
       ScaffoldMessenger.of(context).showSnackBar(
+        
         SnackBar(content: Text("Recordatorio guardado con éxito.")),
       );
 
@@ -99,7 +103,30 @@ class _PantallaNuevoRecordatorioState extends State<PantallaNuevoRecordatorio> {
     }
   }
   //Notificaciones//
-  
+  void crearNotificaciones() async {
+    final fechaHoraSelect = fechaHoraSeleccionada!; // tu DateTime combinado
+    final titulo = 'Recordatorio de ${mascotaController.text}';
+    final mensaje = '${motivoController.text}';
+    final id = fechaHoraSelect.millisecondsSinceEpoch ~/ 1000;
+
+    await NotificationService.programarNotificacion(
+      id: id,
+      titulo: titulo,
+      mensaje: mensaje,
+      fechaHora: fechaHoraSelect,
+    );
+
+    await NotificationService.guardarRecordatorioEnSharedPreferences(
+      id: id,
+      titulo: titulo,
+      mensaje: mensaje,
+      fechaHora: fechaHoraSelect,
+      mascota: mascotaController.text.toString(),
+    );
+    print("Se ha añadido el recordatorio y se ha guardado en local");
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
