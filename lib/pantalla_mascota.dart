@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-//Pantallas
 import 'package:pet_plan_pruebas/pantallaQR.dart';
 import 'package:pet_plan_pruebas/pantalla_edit_perfilUsu.dart';
 import 'package:pet_plan_pruebas/pantalla_editar_mascota.dart';
@@ -16,10 +15,10 @@ class PantallaMascota extends StatelessWidget {
     required this.nombreMascota,
     required this.imagenMascota,
   }) : recordatorios = [
-    "Saca a Firulais a pasear",
-    "Dale la pastilla a Luna",
-    "Hoy le toca veterinario a Max"
-  ];
+          "Saca a Firulais a pasear",
+          "Dale la pastilla a Luna",
+          "Hoy le toca veterinario a Max"
+        ];
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +33,6 @@ class PantallaMascota extends StatelessWidget {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Container(
-            // Este Container asegura que la altura mínima ocupe toda la pantalla
             constraints: BoxConstraints(
               minHeight: MediaQuery.of(context).size.height - kToolbarHeight - MediaQuery.of(context).padding.top,
             ),
@@ -93,30 +91,32 @@ class PantallaMascota extends StatelessWidget {
         ),
         child: CircleAvatar(
           radius: 50,
-          backgroundImage: AssetImage(imagen),
+          backgroundImage: imagen.startsWith('http')
+              ? NetworkImage(imagen)
+              : AssetImage(imagen) as ImageProvider,
         ),
       ),
     );
   }
 
-Widget _editarPerfil(BuildContext context) {
-  return Material(
-    color: Colors.white,
-    shape: const CircleBorder(),
-    elevation: 5,
-    child: IconButton(
-      icon: const Icon(Icons.edit, size: 40, color: Colors.blueGrey),
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const PantallaEditarMascota(title: '', nombreMascota: '',),
-          ),
-        );
-      },
-    ),
-  );
-}
+  Widget _editarPerfil(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      shape: const CircleBorder(),
+      elevation: 5,
+      child: IconButton(
+        icon: const Icon(Icons.edit, size: 40, color: Colors.blueGrey),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const PantallaEditarMascota(title: '', nombreMascota: '',),
+            ),
+          );
+        },
+      ),
+    );
+  }
 
   Widget _infoMascota(String nombre) {
     return Container(
@@ -133,11 +133,12 @@ Widget _editarPerfil(BuildContext context) {
           )
         ],
       ),
-      child: Column(children: [
-        Text("Aquí irá la información de $nombre",
-        style: const TextStyle(fontSize: 18),)
-      ],
-        
+      child: Column(
+        children: [
+          Text("Aquí irá la información de $nombre",
+            style: const TextStyle(fontSize: 18),
+          )
+        ],
       ),
     );
   }
@@ -145,7 +146,8 @@ Widget _editarPerfil(BuildContext context) {
   Widget _botonQR(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        Navigator.push(context,
+        Navigator.push(
+          context,
           MaterialPageRoute(builder: (context) => PantallaQR(nombreMascota: nombreMascota)),
         );
       },
@@ -232,4 +234,3 @@ Widget _editarPerfil(BuildContext context) {
     );
   }
 }
-
