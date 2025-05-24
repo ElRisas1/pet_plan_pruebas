@@ -21,21 +21,34 @@ class PantallaPrincipal extends StatefulWidget {
 }
 
 class _PantallaPrincipalState extends State<PantallaPrincipal> {
-  
-  final List<String> mascotas = ["Firulais", "Luna", "Max"]; //Lista de mascotas
-  List<Map<String, dynamic>> recordatorios = [];  //Lista de recordatorios
-  bool cargandoRecordatorios = true;  
-
-  Map<String, String> imagenesMascotas = {
-    "Firulais": "assets/Perro1.png",
-    "Luna": "assets/gatobonito.jpg",
-    "Max": "assets/GatoEgipcio.png",
-  };
+  List<Map<String, dynamic>> mascotas = [];
+  List<Map<String, dynamic>> recordatorios = [];
+  bool cargandoRecordatorios = true;
+  bool cargandoMascotas = true;
 
   @override
   void initState() {
     super.initState();
     _cargarRecordatorios();
+    _cargarMascotas();
+  }
+
+  Future<void> _cargarMascotas() async {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user == null) {
+      setState(() => cargandoMascotas = false);
+      return;
+    }
+
+    final data = await Supabase.instance.client
+        .from('mascota')
+        .select()
+        .eq('id_usuario', user.id);
+
+    setState(() {
+      mascotas = List<Map<String, dynamic>>.from(data);
+      cargandoMascotas = false;
+    });
   }
 
   Future<void> _cargarRecordatorios() async {
@@ -140,40 +153,60 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
             top: screenHeight * 0.28,
             left: screenWidth * 0.05,
             right: screenWidth * 0.05,
-            child: CarouselSlider(
-              items: mascotas.map((mascota) {
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PantallaMascota(
-                          nombreMascota: mascota,
-                          imagenMascota: imagenesMascotas[mascota] ?? 'assets/default.png',
-                        ),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 152, 184, 239),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Center(
-                      child: Text(
-                        mascota,
-                        style: const TextStyle(fontSize: 35),
-                      ),
+            child: cargandoMascotas
+                ? const Center(child: CircularProgressIndicator())
+                : CarouselSlider(
+                    items: [
+                      ...mascotas.map((mascota) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PantallaMascota(
+                                  nombreMascota: mascota['Nombre'] ?? 'Sin nombre',
+                                  imagenMascota: mascota['Foto'] ?? '',
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 152, 184, 239),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 40,
+                                    backgroundImage: (mascota['Foto'] != null && mascota['Foto'].toString().isNotEmpty)
+                                        ? NetworkImage(mascota['Foto'])
+                                        : null,
+                                    child: (mascota['Foto'] == null || mascota['Foto'].toString().isEmpty)
+                                        ? const Icon(Icons.pets, size: 30, color: Colors.grey)
+                                        : null,
+                                    backgroundColor: Colors.grey[200],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    mascota['Nombre'] ?? 'Sin nombre',
+                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
+                    options: CarouselOptions(
+                      height: screenHeight * 0.22,
+                      enlargeCenterPage: true,
                     ),
                   ),
-                );
-              }).toList(),
-              options: CarouselOptions(
-                height: screenHeight * 0.22,
-                enlargeCenterPage: true,
-              ),
-            ),
           ),
 
           // Título recordatorios y botón +
@@ -200,7 +233,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                           builder: (context) => const PantallaRecordatorio(recordatorio: ""),
                         ),
                       );
-                      _cargarRecordatorios(); // se actualiza al volver
+                      _cargarRecordatorios();
                     },
                   ),
                 ),
@@ -246,16 +279,16 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => DetalleRecordatorio(
-                                      id: rec['Id_recor'], //  ESTA LÍNEA ES CLAVE
+                                      id: rec['Id_recor'],
                                       nombre: rec['Nombre'],
                                       fecha: DateFormat('dd/MM/yyyy').format(fecha),
                                       hora: DateFormat('HH:mm').format(fecha),
                                       nota: rec['Notas'] ?? '',
-                                      ),
-                                          ),
-                                            ).then((eliminado) {
+                                    ),
+                                  ),
+                                ).then((eliminado) {
                                   if (eliminado == true) {
-                                    _cargarRecordatorios(); // Recarga si se eliminó
+                                    _cargarRecordatorios();
                                   }
                                 });
                               },

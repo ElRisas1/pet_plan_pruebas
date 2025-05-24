@@ -9,18 +9,41 @@ import 'package:pet_plan_pruebas/pantalla_mascota.dart';
 import 'package:pet_plan_pruebas/pantalla_agregar_mascota.dart';
 import 'package:pet_plan_pruebas/pantalla_login.dart';
 
-class PantallaPerfil extends StatelessWidget {
-  final List<String> mascotas = ["Firulais", "Luna", "Max"];
+class PantallaPerfil extends StatefulWidget {
+  const PantallaPerfil({super.key});
 
-  PantallaPerfil({super.key});
+  @override
+  State<PantallaPerfil> createState() => _PantallaPerfilState();
+}
 
-  final Map<String, String> imagenesMascotas = {
-    "Firulais": "assets/Perro1.png",
-    "Luna": "assets/gatobonito.jpg",
-    "Max": "assets/GatoEgipcio.png",
-  };
+class _PantallaPerfilState extends State<PantallaPerfil> {
+  List<Map<String, dynamic>> mascotas = [];
+  bool cargando = true;
 
-  // Función para cerrar sesión
+  @override
+  void initState() {
+    super.initState();
+    _cargarMascotas();
+  }
+
+  Future<void> _cargarMascotas() async {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user == null) {
+      setState(() => cargando = false);
+      return;
+    }
+
+    final data = await Supabase.instance.client
+        .from('mascota')
+        .select()
+        .eq('id_usuario', user.id);
+
+    setState(() {
+      mascotas = List<Map<String, dynamic>>.from(data);
+      cargando = false;
+    });
+  }
+
   void _cerrarSesion(BuildContext context) async {
     await Supabase.instance.client.auth.signOut();
 
@@ -108,70 +131,76 @@ class PantallaPerfil extends StatelessWidget {
                         ),
                       ],
                     ),
-
                     child: Column(
                       children: [
                         const Text('Tus mascotas', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 10),
-                        CarouselSlider(
-                          items: [
-                            ...mascotas.map((mascota) {
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => PantallaMascota(
-                                        nombreMascota: mascota,
-                                        imagenMascota: imagenesMascotas[mascota] ?? 'assets/default.png',
-                                      ),
+                        cargando
+                          ? const CircularProgressIndicator()
+                          : CarouselSlider(
+                              items: [
+                                ...mascotas.map((mascota) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => PantallaMascota(
+                                            nombreMascota: mascota['Nombre'] ?? 'Sin nombre',
+                                            imagenMascota: mascota['Foto'] ?? '',
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 40,
+                                          backgroundImage: (mascota['Foto'] != null && mascota['Foto'].toString().isNotEmpty)
+                                              ? NetworkImage(mascota['Foto'])
+                                              : null,
+                                          child: (mascota['Foto'] == null || mascota['Foto'].toString().isEmpty)
+                                              ? const Icon(Icons.pets, size: 30, color: Colors.grey)
+                                              : null,
+                                          backgroundColor: Colors.grey[200],
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Text(
+                                          mascota['Nombre'] ?? 'Sin nombre',
+                                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                        ),
+                                      ],
                                     ),
                                   );
-                                },
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 40,
-                                      backgroundImage: AssetImage(imagenesMascotas[mascota] ?? 'assets/default.png'),
-                                      backgroundColor: Colors.grey[200],
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Text(
-                                      mascota,
-                                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => PantallaAgregarMascota()),
-                                );
-                              },
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CircleAvatar(
-                                    radius: 40,
-                                    backgroundColor: Colors.blue[100],
-                                    child: const Icon(Icons.add, color: Colors.green, size: 30),
+                                }),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => PantallaAgregarMascota()),
+                                    );
+                                  },
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 40,
+                                        backgroundColor: Colors.blue[100],
+                                        child: const Icon(Icons.add, color: Colors.green, size: 30),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      const Text('Añadir mascota', style: TextStyle(fontSize: 16)),
+                                    ],
                                   ),
-                                  const SizedBox(height: 10),
-                                  const Text('Añadir mascota', style: TextStyle(fontSize: 16)),
-                                ],
+                                ),
+                              ],
+                              options: CarouselOptions(
+                                height: 150,
+                                enlargeCenterPage: true,
+                                enableInfiniteScroll: false,
                               ),
                             ),
-                          ],
-                          options: CarouselOptions(
-                            height: 150,
-                            enlargeCenterPage: true,
-                            enableInfiniteScroll: false,
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -224,4 +253,3 @@ class EditarPerfil extends StatelessWidget {
     );
   }
 }
-
