@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PantallaEditPerfilUsu extends StatefulWidget {
   const PantallaEditPerfilUsu({super.key, required String title});
@@ -12,14 +13,69 @@ class PantallaEditPerfilUsu extends StatefulWidget {
 class _PantallaEditPerfilUsuState extends State<PantallaEditPerfilUsu> {
   File? _imagen;
   final picker = ImagePicker();
+  final supabase = Supabase.instance.client;
+
+  final TextEditingController _nombreController = TextEditingController();
+  final TextEditingController _nicknameController = TextEditingController();
+  final TextEditingController _edadController = TextEditingController();
+  final TextEditingController _telefonoController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _direccionController = TextEditingController();
+  final TextEditingController _cpController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarDatosUsuario();
+  }
+
+  Future<void> _cargarDatosUsuario() async {
+    final user = supabase.auth.currentUser;
+    if (user == null) return;
+
+    final data = await supabase
+        .from('Usuarios')
+        .select()
+        .eq('user_id', user.id)
+        .single();
+
+    setState(() {
+      _nombreController.text = data['Nombre'] ?? '';
+      _nicknameController.text = user.userMetadata?['nickname'] ?? '';
+      _edadController.text = data['Edad']?.toString() ?? '';
+      _telefonoController.text = data['Telefono']?.toString() ?? '';
+      _emailController.text = data['Correo'] ?? '';
+      _direccionController.text = data['Direccion'] ?? '';
+      _cpController.text = data['CP']?.toString() ?? '';
+    });
+  }
+
+  Future<void> _guardarDatos() async {
+    final user = supabase.auth.currentUser;
+    if (user == null) return;
+
+    await supabase.from('Usuarios').update({
+      'Nombre': _nombreController.text,
+      'Edad': int.tryParse(_edadController.text),
+      'Telefono': int.tryParse(_telefonoController.text),
+      'Correo': _emailController.text,
+      'Direccion': _direccionController.text,
+      'CP': int.tryParse(_cpController.text),
+    }).eq('user_id', user.id);
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Información guardada')),
+    );
+  }
 
   Future<void> _seleccionarImagen() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
     if (pickedFile != null) {
       setState(() {
         _imagen = File(pickedFile.path);
       });
+      // Aquí podrías subir la imagen a Supabase Storage si lo deseas
     }
   }
 
@@ -57,7 +113,6 @@ class _PantallaEditPerfilUsuState extends State<PantallaEditPerfilUsu> {
                 ),
                 const SizedBox(height: 20),
 
-                // Imagen de perfil editable
                 Stack(
                   alignment: Alignment.bottomRight,
                   children: [
@@ -65,8 +120,7 @@ class _PantallaEditPerfilUsuState extends State<PantallaEditPerfilUsu> {
                       radius: 50,
                       backgroundImage: _imagen != null
                           ? FileImage(_imagen!)
-                          : const AssetImage('assets/default.png')
-                              as ImageProvider,
+                          : const AssetImage('assets/default.png') as ImageProvider,
                     ),
                     Positioned(
                       bottom: 0,
@@ -88,18 +142,16 @@ class _PantallaEditPerfilUsuState extends State<PantallaEditPerfilUsu> {
 
                 const SizedBox(height: 20),
 
-                // Campos de texto
-                _campoTexto('Nombre'),
-                _campoTexto('Nickname'),
-                _campoTexto('Edad'),
-                _campoTexto('Telefono'),
-                _campoTexto('Email'),
-                _campoTexto('Dirección'),
-                _campoTexto('Código Postal'),
+                _campoTexto('Nombre', _nombreController),
+                _campoTexto('Nickname', _nicknameController),
+                _campoTexto('Edad', _edadController),
+                _campoTexto('Telefono', _telefonoController),
+                _campoTexto('Email', _emailController),
+                _campoTexto('Dirección', _direccionController),
+                _campoTexto('Código Postal', _cpController),
 
                 const SizedBox(height: 20),
 
-                // Botón Guardar
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -110,33 +162,7 @@ class _PantallaEditPerfilUsuState extends State<PantallaEditPerfilUsu> {
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text("Confirmación"),
-                            content: const Text("¿Seguro que quieres guardar esta información?"),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.of(context).pop(), // cerrar diálogo
-                                child: const Text("No"),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop(); // cerrar diálogo
-                                  // Aquí podrías guardar los datos
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Información guardada')),
-                                  );
-                                },
-                                child: const Text("Sí"),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
+                    onPressed: _guardarDatos,
                     child: const Text(
                       "Guardar",
                       style: TextStyle(
@@ -155,10 +181,11 @@ class _PantallaEditPerfilUsuState extends State<PantallaEditPerfilUsu> {
     );
   }
 
-  Widget _campoTexto(String label) {
+  Widget _campoTexto(String label, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: TextFormField(
+        controller: controller,
         decoration: InputDecoration(
           labelText: label,
           border: const UnderlineInputBorder(),
