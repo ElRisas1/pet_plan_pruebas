@@ -19,11 +19,13 @@ class PantallaPerfil extends StatefulWidget {
 class _PantallaPerfilState extends State<PantallaPerfil> {
   List<Map<String, dynamic>> mascotas = [];
   bool cargando = true;
+  Map<String, dynamic>? datosUsuario;
 
   @override
   void initState() {
     super.initState();
     _cargarMascotas();
+    _cargarDatosUsuario();
   }
 
   Future<void> _cargarMascotas() async {
@@ -44,6 +46,21 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
     });
   }
 
+  Future<void> _cargarDatosUsuario() async {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user == null) return;
+
+    final data = await Supabase.instance.client
+        .from('Usuarios')
+        .select()
+        .eq('user_id', user.id)
+        .single();
+
+    setState(() {
+      datosUsuario = data;
+    });
+  }
+
   void _cerrarSesion(BuildContext context) async {
     await Supabase.instance.client.auth.signOut();
 
@@ -57,9 +74,12 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
+    final nombre = datosUsuario != null ? datosUsuario!['Nombre'] ?? 'Usuario' : 'Cargando...';
+    final correo = datosUsuario != null ? datosUsuario!['Correo'] ?? '' : '';
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(248, 152, 184, 239),
-      appBar: AppBar(title: const Text("nombre del usuario")),
+      appBar: AppBar(title: Text(nombre)),
       body: SafeArea(
         child: Stack(
           children: [
@@ -80,8 +100,8 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  const Text('@perfilprueba1', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  const Text('Pedro', style: TextStyle(fontSize: 20)),
+                  Text('@$correo', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  Text(nombre, style: const TextStyle(fontSize: 20)),
                   const SizedBox(height: 20),
                   Center(
                     child: FractionallySizedBox(
@@ -100,7 +120,6 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                           ),
                         ),
                       ),
-
                     ),
                   ),
                   const SizedBox(height: 15),
@@ -112,7 +131,8 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => PantallaInfoUsu(title: '')));
+                        MaterialPageRoute(builder: (context) => PantallaInfoUsu(title: '')),
+                      );
                     },
                     child: const Text('Más Información'),
                   ),
