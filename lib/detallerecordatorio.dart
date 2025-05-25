@@ -93,7 +93,7 @@ class DetalleRecordatorio extends StatelessWidget {
                   text: "Edit",
                   color: Colors.green[700]!,
                   onPressed: () {
-                    // Puedes enlazar a pantalla de edición si la tienes
+                  
                   },
                 ),
                 const SizedBox(height: 12),

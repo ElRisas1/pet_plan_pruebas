@@ -49,7 +49,7 @@ class _PantallaRecordatorioState extends State<PantallaRecordatorio> {
 
       setState(() {
         //esto carga los recordatorios que saca del supabase de forma Online Lo comento por ahora para probarlos
-        //recordatorios = List<Map<String, dynamic>>.from(data);
+        recordatorios = List<Map<String, dynamic>>.from(data);
 
         //El mio lo carga desde los archivos guardados en local
         recordatorios = datos

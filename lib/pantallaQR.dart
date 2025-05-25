@@ -37,16 +37,16 @@ class _PantallaQRState extends State<PantallaQR> {
 
   String generarContenidoQR(Map<String, dynamic> data) {
     return '''
-Nombre: ${data['Nombre'] ?? ''}
-Edad: ${data['Edad'] ?? ''}
-Animal: ${data['Animal'] ?? ''}
-Castrado: ${data['Castrado'] ?? ''}
-Color de pelaje: ${data['Color_pelaje'] ?? ''}
-Raza: ${data['Raza'] ?? ''}
-Chip: ${data['Num_Chip'] ?? ''}
-Veterinario: ${data['Veterinario'] ?? ''}
-Info extra: ${data['Informacion'] ?? ''}
-''';
+      Nombre: ${data['Nombre'] ?? ''}
+      Edad: ${data['Edad'] ?? ''}
+      Animal: ${data['Animal'] ?? ''}
+      Castrado: ${data['Castrado'] ?? ''}
+      Color de pelaje: ${data['Color_pelaje'] ?? ''}
+      Raza: ${data['Raza'] ?? ''}
+      Chip: ${data['Num_Chip'] ?? ''}
+      Veterinario: ${data['Veterinario'] ?? ''}
+      Info extra: ${data['Informacion'] ?? ''}
+      ''';
   }
 
   Widget _mostrarCampo(String titulo, dynamic valor) {
