@@ -148,7 +148,7 @@ class PantallaMascota extends StatelessWidget {
       onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => PantallaQR(nombreMascota: nombreMascota)),
+          MaterialPageRoute(builder: (context) => PantallaQR(idMascota: 'abc123')),
         );
       },
       style: ElevatedButton.styleFrom(
