@@ -1,22 +1,32 @@
-import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart' as path;
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 class PantallaEditarMascota extends StatefulWidget {
   final String title;
   final String nombreMascota;
 
-  const PantallaEditarMascota({super.key, required this.title, required this.nombreMascota});
+  const PantallaEditarMascota({
+    super.key,
+    required this.title,
+    required this.nombreMascota,
+  });
 
   @override
   State<PantallaEditarMascota> createState() => _PantallaEditarMascotaState();
 }
 
 class _PantallaEditarMascotaState extends State<PantallaEditarMascota> {
-  File? _imagen;
   final picker = ImagePicker();
+  Uint8List? _imagenBytes;
+  String? _fotoUrl;
+
+  final supabase = Supabase.instance.client;
 
   final TextEditingController nombreController = TextEditingController();
   final TextEditingController edadController = TextEditingController();
@@ -35,39 +45,60 @@ class _PantallaEditarMascotaState extends State<PantallaEditarMascota> {
   }
 
   Future<void> _cargarDatosMascota() async {
-    final response = await Supabase.instance.client
+    final data = await supabase
         .from('mascota')
         .select()
         .eq('Nombre', widget.nombreMascota)
         .single();
 
     setState(() {
-      nombreController.text = response['Nombre'] ?? '';
-      edadController.text = response['Edad'] ?? '';
-      especieController.text = response['Animal'] ?? '';
-      chipController.text = response['Num_Chip'] ?? '';
-      razaController.text = response['Raza'] ?? '';
-      vetController.text = response['Veterinario'] ?? '';
-      castradoController.text = response['Castrado'] ?? '';
-      notaController.text = response['Informacion'] ?? '';
-      colorController.text = response['Color_pelaje'] ?? '';
+      nombreController.text = data['Nombre'] ?? '';
+      edadController.text = data['Edad'] ?? '';
+      especieController.text = data['Animal'] ?? '';
+      chipController.text = data['Num_Chip'] ?? '';
+      razaController.text = data['Raza'] ?? '';
+      vetController.text = data['Veterinario'] ?? '';
+      castradoController.text = data['Castrado'] ?? '';
+      notaController.text = data['Informacion'] ?? '';
+      colorController.text = data['Color_pelaje'] ?? '';
+      _fotoUrl = data['Foto'];
     });
   }
 
   Future<void> _seleccionarImagen() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
+    final picked = await picker.pickImage(source: ImageSource.gallery);
+    if (picked != null) {
+      final bytes = await picked.readAsBytes();
       setState(() {
-        _imagen = File(pickedFile.path);
+        _imagenBytes = bytes;
       });
     }
   }
 
   Future<void> _guardarDatos() async {
-    final user = Supabase.instance.client.auth.currentUser;
+    final user = supabase.auth.currentUser;
     if (user == null) return;
 
-    final data = {
+    if (_imagenBytes != null) {
+      final fileName = '${const Uuid().v4()}.jpg';
+      final filePath = 'mascotas/$fileName';
+
+      try {
+        await supabase.storage
+            .from('imagenesmascotas')
+            .uploadBinary(filePath, _imagenBytes!, fileOptions: const FileOptions(upsert: true));
+
+        final publicUrl = supabase.storage.from('imagenesmascotas').getPublicUrl(filePath);
+        _fotoUrl = publicUrl;
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al subir imagen: $e')),
+        );
+        return;
+      }
+    }
+
+    final updatedData = {
       'Nombre': nombreController.text,
       'Edad': edadController.text,
       'Animal': especieController.text,
@@ -77,20 +108,22 @@ class _PantallaEditarMascotaState extends State<PantallaEditarMascota> {
       'Castrado': castradoController.text,
       'Informacion': notaController.text,
       'Color_pelaje': colorController.text,
+      'Foto': _fotoUrl ?? '',
     };
 
     try {
-      await Supabase.instance.client
+      await supabase
           .from('mascota')
-          .update(data)
+          .update(updatedData)
           .eq('Nombre', widget.nombreMascota);
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Información actualizada correctamente')),
       );
+      Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al guardar: \$e')),
+        SnackBar(content: Text('Error al guardar: $e')),
       );
     }
   }
@@ -111,6 +144,16 @@ class _PantallaEditarMascotaState extends State<PantallaEditarMascota> {
 
   @override
   Widget build(BuildContext context) {
+    ImageProvider avatarImage;
+
+    if (_imagenBytes != null) {
+      avatarImage = MemoryImage(_imagenBytes!);
+    } else if (_fotoUrl != null && _fotoUrl!.isNotEmpty) {
+      avatarImage = NetworkImage(_fotoUrl!);
+    } else {
+      avatarImage = const AssetImage('assets/default.png');
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFFAECBFF),
       appBar: AppBar(
@@ -126,43 +169,30 @@ class _PantallaEditarMascotaState extends State<PantallaEditarMascota> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(20),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 8,
-                  offset: Offset(2, 4),
-                ),
-              ],
+              boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 8)],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  "Edita tu mascota",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
+                const Text("Edita tu mascota", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 20),
                 Stack(
                   alignment: Alignment.bottomRight,
                   children: [
                     CircleAvatar(
                       radius: 50,
-                      backgroundImage: _imagen != null
-                          ? FileImage(_imagen!)
-                          : const AssetImage('assets/default.png') as ImageProvider,
+                      backgroundImage: avatarImage,
+                      backgroundColor: Colors.grey[300],
                     ),
                     Positioned(
                       bottom: 0,
                       right: 4,
                       child: GestureDetector(
                         onTap: _seleccionarImagen,
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.yellow,
-                          ),
-                          padding: const EdgeInsets.all(6),
-                          child: const Icon(Icons.edit, size: 18),
+                        child: const CircleAvatar(
+                          radius: 16,
+                          backgroundColor: Colors.yellow,
+                          child: Icon(Icons.edit, size: 18, color: Colors.black),
                         ),
                       ),
                     ),
@@ -184,42 +214,13 @@ class _PantallaEditarMascotaState extends State<PantallaEditarMascota> {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green[800],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text("Confirmación"),
-                            content: const Text("¿Seguro que quieres guardar esta información?"),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.of(context).pop(),
-                                child: const Text("No"),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                  _guardarDatos();
-                                },
-                                child: const Text("Sí"),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
+                    onPressed: _guardarDatos,
                     child: const Text(
                       "Guardar",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                   ),
                 ),
@@ -236,10 +237,7 @@ class _PantallaEditarMascotaState extends State<PantallaEditarMascota> {
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: TextFormField(
         controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          border: const UnderlineInputBorder(),
-        ),
+        decoration: InputDecoration(labelText: label, border: const UnderlineInputBorder()),
       ),
     );
   }

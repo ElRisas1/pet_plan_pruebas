@@ -1,36 +1,81 @@
 import 'package:flutter/material.dart';
 import 'package:pet_plan_pruebas/pantallaQR.dart';
-import 'package:pet_plan_pruebas/pantalla_edit_perfilUsu.dart';
 import 'package:pet_plan_pruebas/pantalla_editar_mascota.dart';
 import 'package:pet_plan_pruebas/pantalla_recordatorio.dart';
 import 'package:pet_plan_pruebas/pantalla_nuevoRecordatorio.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class PantallaMascota extends StatelessWidget {
+class PantallaMascota extends StatefulWidget {
   final String nombreMascota;
   final String imagenMascota;
   final int edad;
   final String raza;
   final double peso;
-  final List<String> recordatorios;
 
-  PantallaMascota({
+  const PantallaMascota({
     super.key,
     required this.nombreMascota,
     required this.imagenMascota,
     required this.edad,
     required this.raza,
     required this.peso,
-  }) : recordatorios = [
-          "Saca a Firulais a pasear",
-          "Dale la pastilla a Luna",
-          "Hoy le toca veterinario a Max",
-        ];
+  });
+
+  @override
+  State<PantallaMascota> createState() => _PantallaMascotaState();
+}
+
+class _PantallaMascotaState extends State<PantallaMascota> {
+  String imagenActual = '';
+  List<String> recordatorios = [
+    "Saca a Firulais a pasear",
+    "Dale la pastilla a Luna",
+    "Hoy le toca veterinario a Max",
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarImagenActual();
+  }
+
+  Future<void> _cargarImagenActual() async {
+    final supabase = Supabase.instance.client;
+    final data = await supabase
+        .from('mascota')
+        .select('Foto')
+        .eq('Nombre', widget.nombreMascota)
+        .maybeSingle();
+
+    if (data != null && data['Foto'] != null) {
+      setState(() {
+        imagenActual = data['Foto'];
+      });
+    } else {
+      setState(() {
+        imagenActual = '';
+      });
+    }
+  }
+
+  Future<void> _abrirEditor() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PantallaEditarMascota(
+          title: 'Editar Mascota',
+          nombreMascota: widget.nombreMascota,
+        ),
+      ),
+    );
+    await _cargarImagenActual(); // refrescar imagen
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(nombreMascota),
+        title: Text(widget.nombreMascota),
         backgroundColor: const Color.fromARGB(248, 144, 177, 235),
       ),
       body: Container(
@@ -38,37 +83,29 @@ class PantallaMascota extends StatelessWidget {
         width: double.infinity,
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
-          child: Container(
-            constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height -
-                  kToolbarHeight -
-                  MediaQuery.of(context).padding.top,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _titulo(nombreMascota),
-                    _editarPerfil(context),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                _imagenPerfil(imagenMascota),
-                const SizedBox(height: 30),
-                _infoMascota(nombreMascota, edad, raza, peso),
-                const SizedBox(height: 20),
-                _botonQR(context),
-                const SizedBox(height: 30),
-                _tituloSeccion("Recordatorios"),
-                const SizedBox(height: 10),
-                _listaRecordatorios(context, recordatorios),
-                const SizedBox(height: 20),
-                _botonNuevoRecordatorio(context),
-              ],
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _titulo(widget.nombreMascota),
+                  _editarPerfil(),
+                ],
+              ),
+              const SizedBox(height: 20),
+              _imagenPerfil(imagenActual),
+              const SizedBox(height: 30),
+              _infoMascota(widget.nombreMascota, widget.edad, widget.raza, widget.peso),
+              const SizedBox(height: 20),
+              _botonQR(),
+              const SizedBox(height: 30),
+              _tituloSeccion("Recordatorios"),
+              const SizedBox(height: 10),
+              _listaRecordatorios(),
+              const SizedBox(height: 20),
+              _botonNuevoRecordatorio(),
+            ],
           ),
         ),
       ),
@@ -76,18 +113,11 @@ class PantallaMascota extends StatelessWidget {
   }
 
   Widget _titulo(String nombre) {
-    return Text(
-      nombre,
-      style: const TextStyle(
-        fontSize: 30,
-        fontWeight: FontWeight.bold,
-        color: Colors.black87,
-      ),
-    );
+    return Text(nombre, style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold));
   }
 
   Widget _imagenPerfil(String imagen) {
-    final bool esUrl = imagen.startsWith('http');
+    final bool esUrlValida = imagen.isNotEmpty && imagen.startsWith('http');
     return Material(
       elevation: 8,
       shape: const CircleBorder(),
@@ -100,33 +130,24 @@ class PantallaMascota extends StatelessWidget {
         ),
         child: CircleAvatar(
           radius: 50,
-          backgroundImage: esUrl
-              ? NetworkImage(imagen)
-              : AssetImage(imagen) as ImageProvider,
+          backgroundImage: esUrlValida ? NetworkImage(imagen) : null,
+          child: !esUrlValida
+              ? const Icon(Icons.pets, size: 40, color: Colors.grey)
+              : null,
           backgroundColor: Colors.grey[200],
         ),
       ),
     );
   }
 
-  Widget _editarPerfil(BuildContext context) {
+  Widget _editarPerfil() {
     return Material(
       color: Colors.white,
       shape: const CircleBorder(),
       elevation: 5,
       child: IconButton(
         icon: const Icon(Icons.edit, size: 40, color: Colors.blueGrey),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PantallaEditarMascota(
-                title: 'Editar Mascota',
-                nombreMascota: nombreMascota,
-              ),
-            ),
-          );
-        },
+        onPressed: _abrirEditor,
       ),
     );
   }
@@ -138,70 +159,49 @@ class PantallaMascota extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 6,
-            offset: Offset(0, 3),
-          )
-        ],
+        boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 6)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("Nombre: $nombre", style: const TextStyle(fontSize: 18)),
-          const SizedBox(height: 8),
           Text("Edad: $edad años", style: const TextStyle(fontSize: 18)),
-          const SizedBox(height: 8),
           Text("Raza: $raza", style: const TextStyle(fontSize: 18)),
-          const SizedBox(height: 8),
           Text("Peso: ${peso.toStringAsFixed(1)} kg", style: const TextStyle(fontSize: 18)),
         ],
       ),
     );
   }
 
-  Widget _botonQR(BuildContext context) {
+  Widget _botonQR() {
     return ElevatedButton(
       onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => PantallaQR(idMascota: 'abc123')),
+          MaterialPageRoute(builder: (context) => const PantallaQR(idMascota: 'abc123')),
         );
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color.fromARGB(255, 255, 161, 79),
         foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 20),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         elevation: 8,
       ),
-      child: const Text(
-        "QR",
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-      ),
+      child: const Text("QR", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
     );
   }
 
   Widget _tituloSeccion(String titulo) {
-    return Text(
-      titulo,
-      style: const TextStyle(
-        fontSize: 28,
-        fontWeight: FontWeight.bold,
-        color: Colors.black87,
-      ),
-    );
+    return Text(titulo, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold));
   }
 
-  Widget _listaRecordatorios(BuildContext context, List<String> recordatorios) {
+  Widget _listaRecordatorios() {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
-        boxShadow: const [
-          BoxShadow(color: Colors.black26, offset: Offset(0, 2)),
-        ],
+        boxShadow: const [BoxShadow(color: Colors.black26, offset: Offset(0, 2))],
       ),
       child: ListView.separated(
         shrinkWrap: true,
@@ -211,11 +211,8 @@ class PantallaMascota extends StatelessWidget {
         itemBuilder: (context, index) {
           return ListTile(
             leading: const Icon(Icons.alarm, color: Colors.blueAccent),
-            title: Text(
-              recordatorios[index],
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey),
+            title: Text(recordatorios[index], style: const TextStyle(fontSize: 16)),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 18),
             onTap: () {
               Navigator.push(
                 context,
@@ -230,25 +227,24 @@ class PantallaMascota extends StatelessWidget {
     );
   }
 
-  Widget _botonNuevoRecordatorio(BuildContext context) {
+  Widget _botonNuevoRecordatorio() {
     return ElevatedButton(
       onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => PantallaNuevoRecordatorio(title: 'Nuevo Recordatorio')),
+          MaterialPageRoute(
+              builder: (context) => const PantallaNuevoRecordatorio(title: 'Nuevo Recordatorio')),
         );
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color.fromARGB(255, 255, 161, 79),
         foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 20),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         elevation: 8,
       ),
-      child: const Text(
-        "Nuevo Recordatorio",
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-      ),
+      child: const Text("Nuevo Recordatorio", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
     );
   }
 }
+

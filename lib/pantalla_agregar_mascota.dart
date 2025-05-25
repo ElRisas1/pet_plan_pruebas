@@ -1,10 +1,11 @@
+// Pantalla para agregar una nueva mascota con diseño visual mejorado
 import 'package:flutter/material.dart';
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'package:path/path.dart' as path;
-import 'package:intl/intl.dart';
 
 class PantallaAgregarMascota extends StatefulWidget {
   const PantallaAgregarMascota({super.key});
@@ -22,7 +23,7 @@ class _PantallaAgregarMascotaState extends State<PantallaAgregarMascota> {
   final TextEditingController _informacionExtraController = TextEditingController();
   final TextEditingController _datosVeterinarioController = TextEditingController();
 
-  File? _imagenMascota;
+  Uint8List? _imagenBytes;
   String? _fotoUrl;
   DateTime? _fechaSeleccionada;
   String? _tipoAnimalSeleccionado;
@@ -30,36 +31,22 @@ class _PantallaAgregarMascotaState extends State<PantallaAgregarMascota> {
   String? _razaSeleccionada;
   bool _castrado = false;
 
-  Future<void> _seleccionarImagen() async {
+  Future<void> seleccionarImagen() async {
     final picker = ImagePicker();
-    final XFile? imagen = await picker.pickImage(source: ImageSource.gallery);
+    final imagen = await picker.pickImage(source: ImageSource.gallery);
     if (imagen != null) {
+      final bytes = await imagen.readAsBytes();
       setState(() {
-        _imagenMascota = File(imagen.path);
-      });
-    }
-  }
-
-  Future<void> _seleccionarFecha(BuildContext context) async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null) {
-      setState(() {
-        _fechaSeleccionada = picked;
-        _fechaNacimientoController.text = DateFormat('dd/MM/yyyy').format(picked);
+        _imagenBytes = bytes;
       });
     }
   }
 
   void _cargarRazas() {
     if (_tipoAnimalSeleccionado == 'Perro') {
-      _razas = ['Labrador', 'Bulldog', 'Pastor Alemán', 'Golden Retriever', 'Chihuahua'];
+      _razas = ['Labrador', 'Bulldog', 'Pastor Alemán'];
     } else if (_tipoAnimalSeleccionado == 'Gato') {
-      _razas = ['Persa', 'Siames', 'Maine Coon', 'Bengalí', 'Esfinge'];
+      _razas = ['Siames', 'Persa', 'Bengalí'];
     } else {
       _razas = [];
     }
@@ -69,31 +56,19 @@ class _PantallaAgregarMascotaState extends State<PantallaAgregarMascota> {
   Future<void> _guardarMascota() async {
     if (_formKey.currentState!.validate()) {
       final user = Supabase.instance.client.auth.currentUser;
-      if (user == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Debes iniciar sesión")),
-        );
-        return;
-      }
+      if (user == null) return;
 
-      if (_imagenMascota != null) {
-        final ext = path.extension(_imagenMascota!.path);
-        final fileName = '${const Uuid().v4()}$ext';
-        final filePath = 'mascotas/$fileName';
-        final bytes = await _imagenMascota!.readAsBytes();
-
+      if (_imagenBytes != null) {
         try {
+          final fileName = '${const Uuid().v4()}.jpg';
+          final filePath = 'mascotas/$fileName';
           await Supabase.instance.client.storage
               .from('imagenesmascotas')
-              .uploadBinary(filePath, bytes, fileOptions: const FileOptions(upsert: true));
+              .uploadBinary(filePath, _imagenBytes!);
 
-          final publicUrl = Supabase.instance.client.storage
+          _fotoUrl = Supabase.instance.client.storage
               .from('imagenesmascotas')
               .getPublicUrl(filePath);
-
-          setState(() {
-            _fotoUrl = publicUrl;
-          });
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error al subir imagen: $e')),
@@ -109,7 +84,7 @@ class _PantallaAgregarMascotaState extends State<PantallaAgregarMascota> {
           'Animal': _tipoAnimalSeleccionado,
           'Castrado': _castrado ? 'Sí' : 'No',
           'Color_pelaje': _colorPelajeController.text,
-          'Raza': _razaSeleccionada ?? 'Desconocida',
+          'Raza': _razaSeleccionada,
           'Foto': _fotoUrl ?? '',
           'Informacion': _informacionExtraController.text,
           'Veterinario': _datosVeterinarioController.text,
@@ -118,26 +93,15 @@ class _PantallaAgregarMascotaState extends State<PantallaAgregarMascota> {
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Mascota guardada correctamente")),
+          const SnackBar(content: Text('Mascota guardada correctamente')),
         );
         Navigator.pop(context);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error inesperado: $e")),
+          SnackBar(content: Text('Error al guardar: $e')),
         );
       }
     }
-  }
-
-  @override
-  void dispose() {
-    _nombreController.dispose();
-    _fechaNacimientoController.dispose();
-    _numeroChipController.dispose();
-    _colorPelajeController.dispose();
-    _informacionExtraController.dispose();
-    _datosVeterinarioController.dispose();
-    super.dispose();
   }
 
   @override
@@ -150,70 +114,47 @@ class _PantallaAgregarMascotaState extends State<PantallaAgregarMascota> {
         child: Form(
           key: _formKey,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Text("Foto de la mascota", style: TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-              Center(
-                child: Stack(
-                  alignment: Alignment.bottomRight,
-                  children: [
-                    CircleAvatar(
-                      radius: 60,
-                      backgroundColor: Colors.grey[200],
-                      backgroundImage: _imagenMascota != null
-                          ? FileImage(_imagenMascota!)
-                          : (_fotoUrl != null && _fotoUrl!.isNotEmpty
-                              ? NetworkImage(_fotoUrl!)
-                              : null),
-                      child: _imagenMascota == null && (_fotoUrl == null || _fotoUrl!.isEmpty)
-                          ? const Icon(Icons.pets, size: 30, color: Colors.grey)
-                          : null,
-                    ),
-                    Positioned(
-                      right: 4,
-                      bottom: 4,
-                      child: GestureDetector(
-                        onTap: _seleccionarImagen,
-                        child: const CircleAvatar(
-                          radius: 16,
-                          backgroundColor: Colors.yellow,
-                          child: Icon(Icons.edit, size: 18, color: Colors.black),
-                        ),
-                      ),
-                    ),
-                  ],
+              GestureDetector(
+                onTap: seleccionarImagen,
+                child: CircleAvatar(
+                  radius: 60,
+                  backgroundColor: Colors.grey[200],
+                  backgroundImage:
+                      _imagenBytes != null ? MemoryImage(_imagenBytes!) : null,
+                  child: _imagenBytes == null
+                      ? const Icon(Icons.pets, size: 40, color: Colors.grey)
+                      : null,
                 ),
               ),
               const SizedBox(height: 20),
-              Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      _buildTextField("Nombre", _nombreController, "Ej: Firulais"),
-                      _buildDropdownTipo(),
-                      _buildDropdownRaza(),
-                      _buildFechaNacimiento(),
-                      _buildCheckboxCastrado(),
-                      _buildTextField("Número del Chip", _numeroChipController, "Ej: 123456"),
-                      _buildTextField("Color del Pelaje", _colorPelajeController, "Ej: Marrón"),
-                      _buildTextField("Información adicional", _informacionExtraController, "Cualquier dato extra"),
-                      _buildTextField("Veterinario", _datosVeterinarioController, "Nombre o contacto"),
-                    ],
-                  ),
-                ),
+              _buildInput("Nombre", _nombreController),
+              _buildDropdown("Tipo", ['Perro', 'Gato'], _tipoAnimalSeleccionado,
+                  (val) {
+                setState(() {
+                  _tipoAnimalSeleccionado = val;
+                  _cargarRazas();
+                });
+              }),
+              _buildDropdown("Raza", _razas, _razaSeleccionada, (val) {
+                setState(() => _razaSeleccionada = val);
+              }),
+              _buildFecha(),
+              CheckboxListTile(
+                title: const Text("Está castrado?"),
+                value: _castrado,
+                onChanged: (val) => setState(() => _castrado = val ?? false),
               ),
+              _buildInput("Número de Chip", _numeroChipController),
+              _buildInput("Color del Pelaje", _colorPelajeController),
+              _buildInput("Información adicional", _informacionExtraController),
+              _buildInput("Veterinario", _datosVeterinarioController),
               const SizedBox(height: 20),
-              Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                  onPressed: _guardarMascota,
-                  child: const Text('Guardar Mascota'),
-                ),
+              ElevatedButton(
+                onPressed: _guardarMascota,
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                child: const Text('Guardar Mascota'),
               ),
             ],
           ),
@@ -222,64 +163,39 @@ class _PantallaAgregarMascotaState extends State<PantallaAgregarMascota> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, String hint) {
+  Widget _buildInput(String label, TextEditingController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
         TextFormField(
           controller: controller,
-          decoration: InputDecoration(hintText: hint),
-          validator: (value) => (label == "Nombre" && (value == null || value.isEmpty))
-              ? 'Campo obligatorio'
-              : null,
+          validator: (val) => val == null || val.isEmpty ? 'Campo obligatorio' : null,
         ),
         const SizedBox(height: 20),
       ],
     );
   }
 
-  Widget _buildDropdownTipo() {
+  Widget _buildDropdown(String label, List<String> items, String? selectedValue, Function(String?) onChanged) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Tipo de mascota", style: TextStyle(fontWeight: FontWeight.bold)),
+        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
         DropdownButtonFormField<String>(
-          value: _tipoAnimalSeleccionado,
-          decoration: const InputDecoration(hintText: 'Selecciona tipo de animal'),
-          items: ['Perro', 'Gato']
-              .map((tipo) => DropdownMenuItem(value: tipo, child: Text(tipo)))
+          value: selectedValue,
+          items: items
+              .map((e) => DropdownMenuItem<String>(value: e, child: Text(e)))
               .toList(),
-          onChanged: (value) {
-            setState(() {
-              _tipoAnimalSeleccionado = value;
-              _cargarRazas();
-            });
-          },
-          validator: (value) => value == null ? 'Selecciona el tipo de animal' : null,
+          onChanged: onChanged,
+          validator: (value) => value == null ? 'Campo obligatorio' : null,
         ),
         const SizedBox(height: 20),
       ],
     );
   }
 
-  Widget _buildDropdownRaza() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text("Raza", style: TextStyle(fontWeight: FontWeight.bold)),
-        DropdownButtonFormField<String>(
-          value: _razaSeleccionada,
-          decoration: const InputDecoration(hintText: 'Selecciona una raza'),
-          items: _razas.map((raza) => DropdownMenuItem(value: raza, child: Text(raza))).toList(),
-          onChanged: (value) => setState(() => _razaSeleccionada = value),
-        ),
-        const SizedBox(height: 20),
-      ],
-    );
-  }
-
-  Widget _buildFechaNacimiento() {
+  Widget _buildFecha() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -287,34 +203,24 @@ class _PantallaAgregarMascotaState extends State<PantallaAgregarMascota> {
         TextFormField(
           controller: _fechaNacimientoController,
           readOnly: true,
-          onTap: () => _seleccionarFecha(context),
-          decoration: const InputDecoration(
-            hintText: 'DD/MM/AAAA',
-            suffixIcon: Icon(Icons.calendar_today),
-          ),
-          validator: (value) {
-            if (value == null || value.isEmpty) return 'Selecciona una fecha';
-            try {
-              DateFormat('dd/MM/yyyy').parseStrict(value);
-              return null;
-            } catch (_) {
-              return 'Formato de fecha inválido';
+          onTap: () async {
+            final picked = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime(2000),
+              lastDate: DateTime.now(),
+            );
+            if (picked != null) {
+              setState(() {
+                _fechaSeleccionada = picked;
+                _fechaNacimientoController.text = DateFormat('dd/MM/yyyy').format(picked);
+              });
             }
           },
+          validator: (val) => val == null || val.isEmpty ? 'Campo obligatorio' : null,
+          decoration: const InputDecoration(suffixIcon: Icon(Icons.calendar_today)),
         ),
         const SizedBox(height: 20),
-      ],
-    );
-  }
-
-  Widget _buildCheckboxCastrado() {
-    return Row(
-      children: [
-        const Text("¿Está castrado?", style: TextStyle(fontWeight: FontWeight.bold)),
-        Checkbox(
-          value: _castrado,
-          onChanged: (value) => setState(() => _castrado = value ?? false),
-        ),
       ],
     );
   }

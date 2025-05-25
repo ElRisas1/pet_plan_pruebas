@@ -6,6 +6,7 @@ import 'package:pet_plan_pruebas/pantalla_edit_perfilUsu.dart';
 import 'package:pet_plan_pruebas/pantalla_mascota.dart';
 import 'package:pet_plan_pruebas/pantalla_agregar_mascota.dart';
 import 'package:pet_plan_pruebas/pantalla_login.dart';
+import 'package:intl/intl.dart';
 
 class PantallaPerfil extends StatefulWidget {
   const PantallaPerfil({super.key});
@@ -17,54 +18,64 @@ class PantallaPerfil extends StatefulWidget {
 class _PantallaPerfilState extends State<PantallaPerfil> {
   List<Map<String, dynamic>> mascotas = [];
   bool cargando = true;
+  bool cargandoUsuario = true;
+
   String? _fotoUrl;
+  String? _nombreUsuario;
+  String? _username;
+  String? _email;
 
   @override
   void initState() {
     super.initState();
-    _cargarMascotas();
-    _cargarFotoUsuario();
+    _cargarTodo();
   }
 
-  Future<void> _cargarMascotas() async {
+  Future<void> _cargarTodo() async {
     final user = Supabase.instance.client.auth.currentUser;
-    if (user == null) {
-      setState(() => cargando = false);
-      return;
-    }
+    if (user == null) return;
 
-    final data = await Supabase.instance.client
+    final dataUsuario = await Supabase.instance.client
+        .from('Usuarios')
+        .select()
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+    final dataMascotas = await Supabase.instance.client
         .from('mascota')
         .select()
         .eq('id_usuario', user.id);
 
     setState(() {
-      mascotas = List<Map<String, dynamic>>.from(data);
+      _fotoUrl = dataUsuario?['Foto'];
+      _nombreUsuario = dataUsuario?['Nombre'];
+      _username = dataUsuario?['Username'];
+      _email = user.email;
+      mascotas = List<Map<String, dynamic>>.from(dataMascotas);
       cargando = false;
+      cargandoUsuario = false;
     });
   }
 
-  Future<void> _cargarFotoUsuario() async {
-    final user = Supabase.instance.client.auth.currentUser;
-    if (user == null) return;
-
-    final data = await Supabase.instance.client
-        .from('Usuarios')
-        .select('Foto')
-        .eq('user_id', user.id)
-        .single();
-
-    setState(() {
-      _fotoUrl = data['Foto'];
-    });
-  }
-
-  void _cerrarSesion(BuildContext context) async {
+  void _cerrarSesion() async {
     await Supabase.instance.client.auth.signOut();
+    if (!mounted) return;
+    Navigator.of(context).pushNamedAndRemoveUntil('/login', (_) => false);
+  }
 
-    if (!context.mounted) return;
-
-    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+  int _calcularEdadDesdeFecha(String? fechaStr) {
+    if (fechaStr == null || fechaStr.isEmpty) return 0;
+    try {
+      final fecha = DateFormat('dd/MM/yyyy').parse(fechaStr);
+      final hoy = DateTime.now();
+      int edad = hoy.year - fecha.year;
+      if (hoy.month < fecha.month || (hoy.month == fecha.month && hoy.day < fecha.day)) {
+        edad--;
+      }
+      return edad;
+    } catch (_) {
+      return 0;
+    }
   }
 
   @override
@@ -74,7 +85,7 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(248, 152, 184, 239),
-      appBar: AppBar(title: const Text("nombre del usuario")),
+      appBar: AppBar(title: Text(_nombreUsuario ?? 'Perfil')),
       body: SafeArea(
         child: Stack(
           children: [
@@ -82,20 +93,17 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
               child: Column(
                 children: [
                   const SizedBox(height: 50),
-                  Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(shape: BoxShape.circle),
-                    child: CircleAvatar(
-                      radius: 70,
-                      backgroundImage: _fotoUrl != null && _fotoUrl!.isNotEmpty
-                          ? NetworkImage(_fotoUrl!)
-                          : const AssetImage('assets/profile_pic.png') as ImageProvider,
-                      backgroundColor: Colors.grey[200],
-                    ),
+                  CircleAvatar(
+                    radius: 70,
+                    backgroundImage: _fotoUrl != null && _fotoUrl!.isNotEmpty
+                        ? NetworkImage(_fotoUrl!)
+                        : const AssetImage('assets/profile_pic.png') as ImageProvider,
+                    backgroundColor: Colors.grey[200],
                   ),
                   const SizedBox(height: 10),
-                  const Text('@perfilprueba1', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  const Text('Pedro', style: TextStyle(fontSize: 20)),
+                  Text('@${_username ?? "usuario"}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  Text(_nombreUsuario ?? '', style: const TextStyle(fontSize: 20)),
+                  Text(_email ?? '', style: const TextStyle(fontSize: 16)),
                   const SizedBox(height: 20),
                   Center(
                     child: FractionallySizedBox(
@@ -106,26 +114,33 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                         ),
                         color: Colors.white,
                         elevation: 6,
-                        child: const Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Text(
-                            'Prueba de texto',
-                            textAlign: TextAlign.center,
-                          ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: cargandoUsuario
+                              ? const CircularProgressIndicator()
+                              : Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Nombre: ${_nombreUsuario ?? "N/D"}'),
+                                    const SizedBox(height: 8),
+                                    Text('Username: @${_username ?? "N/D"}'),
+                                    const SizedBox(height: 8),
+                                    Text('Email: ${_email ?? "N/D"}'),
+                                  ],
+                                ),
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 15),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      elevation: 6,
-                    ),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green, elevation: 6),
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => PantallaInfoUsu(title: '')),
+                        MaterialPageRoute(
+                          builder: (_) => const PantallaInfoUsu(title: ''),
+                        ),
                       );
                     },
                     child: const Text('Más Información'),
@@ -137,13 +152,7 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 8,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
+                      boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 8)],
                     ),
                     child: Column(
                       children: [
@@ -154,6 +163,7 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                             : CarouselSlider(
                                 items: [
                                   ...mascotas.map((mascota) {
+                                    final edad = _calcularEdadDesdeFecha(mascota['Edad']);
                                     return GestureDetector(
                                       onTap: () {
                                         Navigator.push(
@@ -162,7 +172,7 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                                             builder: (context) => PantallaMascota(
                                               nombreMascota: mascota['Nombre'] ?? 'Sin nombre',
                                               imagenMascota: mascota['Foto'] ?? '',
-                                              edad: mascota['Edad'] ?? 0,
+                                              edad: edad,
                                               raza: mascota['Raza'] ?? 'Desconocida',
                                               peso: (mascota['Peso'] != null)
                                                   ? double.tryParse(mascota['Peso'].toString()) ?? 0.0
@@ -176,12 +186,10 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                                         children: [
                                           CircleAvatar(
                                             radius: 40,
-                                            backgroundImage: (mascota['Foto'] != null &&
-                                                    mascota['Foto'].toString().isNotEmpty)
+                                            backgroundImage: (mascota['Foto'] != null && mascota['Foto'].toString().isNotEmpty)
                                                 ? NetworkImage(mascota['Foto'])
                                                 : null,
-                                            child: (mascota['Foto'] == null ||
-                                                    mascota['Foto'].toString().isEmpty)
+                                            child: (mascota['Foto'] == null || mascota['Foto'].toString().isEmpty)
                                                 ? const Icon(Icons.pets, size: 30, color: Colors.grey)
                                                 : null,
                                             backgroundColor: Colors.grey[200],
@@ -196,11 +204,12 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                                     );
                                   }),
                                   GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
+                                    onTap: () async {
+                                      await Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => PantallaAgregarMascota()),
+                                        MaterialPageRoute(builder: (_) => const PantallaAgregarMascota()),
                                       );
+                                      await _cargarTodo();
                                     },
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -227,11 +236,8 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      elevation: 6,
-                    ),
-                    onPressed: () => _cerrarSesion(context),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red, elevation: 6),
+                    onPressed: () => _cerrarSesion(),
                     child: const Text('Cerrar sesión'),
                   ),
                   const SizedBox(height: 20),
@@ -241,34 +247,24 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
             Positioned(
               top: screenHeight * 0.05,
               right: screenWidth * 0.05,
-              child: const EditarPerfil(),
+              child: Material(
+                color: Colors.white,
+                shape: const CircleBorder(),
+                elevation: 5,
+                child: IconButton(
+                  icon: const Icon(Icons.edit, size: 40, color: Colors.blueGrey),
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const PantallaEditPerfilUsu(title: '')),
+                    );
+                    await _cargarTodo(); // refresca después de editar
+                  },
+                ),
+              ),
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class EditarPerfil extends StatelessWidget {
-  const EditarPerfil({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      shape: const CircleBorder(),
-      elevation: 5,
-      child: IconButton(
-        icon: const Icon(Icons.edit, size: 40, color: Colors.blueGrey),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const PantallaEditPerfilUsu(title: ''),
-            ),
-          );
-        },
       ),
     );
   }
