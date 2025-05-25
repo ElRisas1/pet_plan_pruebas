@@ -1,9 +1,14 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:intl/intl.dart';
 
 class PantallaEditarMascota extends StatefulWidget {
-  const PantallaEditarMascota({super.key, required String title, required String nombreMascota});
+  final String title;
+  final String nombreMascota;
+
+  const PantallaEditarMascota({super.key, required this.title, required this.nombreMascota});
 
   @override
   State<PantallaEditarMascota> createState() => _PantallaEditarMascotaState();
@@ -13,14 +18,95 @@ class _PantallaEditarMascotaState extends State<PantallaEditarMascota> {
   File? _imagen;
   final picker = ImagePicker();
 
+  final TextEditingController nombreController = TextEditingController();
+  final TextEditingController edadController = TextEditingController();
+  final TextEditingController especieController = TextEditingController();
+  final TextEditingController chipController = TextEditingController();
+  final TextEditingController razaController = TextEditingController();
+  final TextEditingController vetController = TextEditingController();
+  final TextEditingController castradoController = TextEditingController();
+  final TextEditingController notaController = TextEditingController();
+  final TextEditingController colorController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarDatosMascota();
+  }
+
+  Future<void> _cargarDatosMascota() async {
+    final response = await Supabase.instance.client
+        .from('mascota')
+        .select()
+        .eq('Nombre', widget.nombreMascota)
+        .single();
+
+    setState(() {
+      nombreController.text = response['Nombre'] ?? '';
+      edadController.text = response['Edad'] ?? '';
+      especieController.text = response['Animal'] ?? '';
+      chipController.text = response['Num_Chip'] ?? '';
+      razaController.text = response['Raza'] ?? '';
+      vetController.text = response['Veterinario'] ?? '';
+      castradoController.text = response['Castrado'] ?? '';
+      notaController.text = response['Informacion'] ?? '';
+      colorController.text = response['Color_pelaje'] ?? '';
+    });
+  }
+
   Future<void> _seleccionarImagen() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
     if (pickedFile != null) {
       setState(() {
         _imagen = File(pickedFile.path);
       });
     }
+  }
+
+  Future<void> _guardarDatos() async {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user == null) return;
+
+    final data = {
+      'Nombre': nombreController.text,
+      'Edad': edadController.text,
+      'Animal': especieController.text,
+      'Num_Chip': chipController.text,
+      'Raza': razaController.text,
+      'Veterinario': vetController.text,
+      'Castrado': castradoController.text,
+      'Informacion': notaController.text,
+      'Color_pelaje': colorController.text,
+    };
+
+    try {
+      await Supabase.instance.client
+          .from('mascota')
+          .update(data)
+          .eq('Nombre', widget.nombreMascota);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Información actualizada correctamente')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al guardar: \$e')),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    nombreController.dispose();
+    edadController.dispose();
+    especieController.dispose();
+    chipController.dispose();
+    razaController.dispose();
+    vetController.dispose();
+    castradoController.dispose();
+    notaController.dispose();
+    colorController.dispose();
+    super.dispose();
   }
 
   @override
@@ -56,8 +142,6 @@ class _PantallaEditarMascotaState extends State<PantallaEditarMascota> {
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 20),
-
-                // Imagen de perfil editable
                 Stack(
                   alignment: Alignment.bottomRight,
                   children: [
@@ -65,8 +149,7 @@ class _PantallaEditarMascotaState extends State<PantallaEditarMascota> {
                       radius: 50,
                       backgroundImage: _imagen != null
                           ? FileImage(_imagen!)
-                          : const AssetImage('assets/default.png')
-                              as ImageProvider,
+                          : const AssetImage('assets/default.png') as ImageProvider,
                     ),
                     Positioned(
                       bottom: 0,
@@ -85,22 +168,17 @@ class _PantallaEditarMascotaState extends State<PantallaEditarMascota> {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 20),
-
-                // Campos de texto
-                _campoTexto('Nombre'),
-                _campoTexto('Edad'),
-                _campoTexto('Animal'),
-                _campoTexto('Número de chip'),
-                _campoTexto('Raza'),
-                _campoTexto('Veterinario'),
-                _campoTexto('¿Castrado?'),
-                _campoTexto('Nota'),
-
+                _campoTexto('Nombre', nombreController),
+                _campoFecha('Edad (dd/MM/yyyy)', edadController),
+                _campoTexto('Especie', especieController),
+                _campoTexto('N° Chip', chipController),
+                _campoTexto('Raza', razaController),
+                _campoTexto('Color del Pelaje', colorController),
+                _campoTexto('Veterinario', vetController),
+                _campoTexto('¿Castrado?', castradoController),
+                _campoTexto('Nota', notaController),
                 const SizedBox(height: 20),
-
-                // Botón Guardar
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -120,16 +198,13 @@ class _PantallaEditarMascotaState extends State<PantallaEditarMascota> {
                             content: const Text("¿Seguro que quieres guardar esta información?"),
                             actions: [
                               TextButton(
-                                onPressed: () => Navigator.of(context).pop(), // cerrar diálogo
+                                onPressed: () => Navigator.of(context).pop(),
                                 child: const Text("No"),
                               ),
                               TextButton(
                                 onPressed: () {
-                                  Navigator.of(context).pop(); // cerrar diálogo
-                                  // Aquí podrías guardar los datos
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Información guardada')),
-                                  );
+                                  Navigator.of(context).pop();
+                                  _guardarDatos();
                                 },
                                 child: const Text("Sí"),
                               ),
@@ -156,10 +231,11 @@ class _PantallaEditarMascotaState extends State<PantallaEditarMascota> {
     );
   }
 
-  Widget _campoTexto(String label) {
+  Widget _campoTexto(String label, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: TextFormField(
+        controller: controller,
         decoration: InputDecoration(
           labelText: label,
           border: const UnderlineInputBorder(),
@@ -167,6 +243,32 @@ class _PantallaEditarMascotaState extends State<PantallaEditarMascota> {
       ),
     );
   }
-}
 
-  
+  Widget _campoFecha(String label, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: TextFormField(
+        controller: controller,
+        readOnly: true,
+        onTap: () async {
+          final picked = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(2000),
+            lastDate: DateTime.now(),
+          );
+          if (picked != null) {
+            setState(() {
+              controller.text = DateFormat('dd/MM/yyyy').format(picked);
+            });
+          }
+        },
+        decoration: InputDecoration(
+          labelText: label,
+          border: const UnderlineInputBorder(),
+          suffixIcon: const Icon(Icons.calendar_today),
+        ),
+      ),
+    );
+  }
+}

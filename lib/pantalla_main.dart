@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-// Pantallas
 import 'pantalla_recordatorio.dart';
 import 'pantalla_ajustes.dart';
 import 'pantalla_ayuda.dart';
@@ -67,6 +66,20 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
     }
   }
 
+  int calcularEdadDesdeFecha(String fechaStr) {
+    try {
+      final fecha = DateFormat('dd/MM/yyyy').parse(fechaStr);
+      final hoy = DateTime.now();
+      int edad = hoy.year - fecha.year;
+      if (hoy.month < fecha.month || (hoy.month == fecha.month && hoy.day < fecha.day)) {
+        edad--;
+      }
+      return edad;
+    } catch (_) {
+      return 0;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -78,7 +91,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
         children: [
           AppBar(
             title: const Text("Pet Plan"),
-            backgroundColor: Color.fromARGB(100, 255, 242, 168),
+            backgroundColor: const Color.fromARGB(100, 255, 242, 168),
           ),
 
           // Botón de ajustes
@@ -94,7 +107,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => PantallaAjustes(title: '')),
+                    MaterialPageRoute(builder: (context) => const PantallaAjustes(title: '')),
                   );
                 },
               ),
@@ -120,7 +133,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => PantallaPerfil()),
+                      MaterialPageRoute(builder: (context) => const PantallaPerfil()),
                     );
                   },
                   child: ClipOval(
@@ -156,52 +169,56 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
             child: cargandoMascotas
                 ? const Center(child: CircularProgressIndicator())
                 : CarouselSlider(
-                    items: [
-                      ...mascotas.map((mascota) {
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PantallaMascota(
-                                  nombreMascota: mascota['Nombre'] ?? 'Sin nombre',
-                                  imagenMascota: mascota['Foto'] ?? '',
-                                ),
+                    items: mascotas.map((mascota) {
+                      final edad = calcularEdadDesdeFecha(mascota['Edad'].toString());
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PantallaMascota(
+                                nombreMascota: mascota['Nombre'] ?? 'Sin nombre',
+                                imagenMascota: mascota['Foto'] ?? '',
+                                edad: edad,
+                                raza: mascota['Raza'] ?? 'Desconocida',
+                                peso: double.tryParse(mascota['Peso'].toString()) ?? 0.0,
                               ),
-                            );
-                          },
-                          child: Container(
-                            margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 152, 184, 239),
-                              borderRadius: BorderRadius.circular(10),
                             ),
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CircleAvatar(
-                                    radius: 40,
-                                    backgroundImage: (mascota['Foto'] != null && mascota['Foto'].toString().isNotEmpty)
-                                        ? NetworkImage(mascota['Foto'])
-                                        : null,
-                                    child: (mascota['Foto'] == null || mascota['Foto'].toString().isEmpty)
-                                        ? const Icon(Icons.pets, size: 30, color: Colors.grey)
-                                        : null,
-                                    backgroundColor: Colors.grey[200],
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    mascota['Nombre'] ?? 'Sin nombre',
-                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                  ),
-                                ],
-                              ),
+                          );
+                        },
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 152, 184, 239),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  radius: 40,
+                                  backgroundImage: (mascota['Foto'] != null &&
+                                          mascota['Foto'].toString().isNotEmpty)
+                                      ? NetworkImage(mascota['Foto'])
+                                      : null,
+                                  child: (mascota['Foto'] == null ||
+                                          mascota['Foto'].toString().isEmpty)
+                                      ? const Icon(Icons.pets, size: 30, color: Colors.grey)
+                                      : null,
+                                  backgroundColor: Colors.grey[200],
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  mascota['Nombre'] ?? 'Sin nombre',
+                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                ),
+                              ],
                             ),
                           ),
-                        );
-                      }),
-                    ],
+                        ),
+                      );
+                    }).toList(),
                     options: CarouselOptions(
                       height: screenHeight * 0.22,
                       enlargeCenterPage: true,
@@ -307,7 +324,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PantallaChatIA(title: "pantalla ia")),
+                  MaterialPageRoute(builder: (context) => const PantallaChatIA(title: "pantalla ia")),
                 );
               },
               style: ElevatedButton.styleFrom(
