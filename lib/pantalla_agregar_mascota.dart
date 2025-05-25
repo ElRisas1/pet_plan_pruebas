@@ -23,7 +23,7 @@ class _PantallaAgregarMascotaState extends State<PantallaAgregarMascota> {
   final TextEditingController _datosVeterinarioController = TextEditingController();
 
   File? _imagenMascota;
-  String? _fotoUrl; // URL generada después de subir
+  String? _fotoUrl;
   DateTime? _fechaSeleccionada;
   String? _tipoAnimalSeleccionado;
   List<String> _razas = [];
@@ -85,7 +85,7 @@ class _PantallaAgregarMascotaState extends State<PantallaAgregarMascota> {
         try {
           await Supabase.instance.client.storage
               .from('imagenesmascotas')
-              .uploadBinary(filePath, bytes, fileOptions: const FileOptions(upsert: false));
+              .uploadBinary(filePath, bytes, fileOptions: const FileOptions(upsert: true));
 
           final publicUrl = Supabase.instance.client.storage
               .from('imagenesmascotas')
@@ -94,7 +94,6 @@ class _PantallaAgregarMascotaState extends State<PantallaAgregarMascota> {
           setState(() {
             _fotoUrl = publicUrl;
           });
-
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error al subir imagen: $e')),
@@ -116,7 +115,7 @@ class _PantallaAgregarMascotaState extends State<PantallaAgregarMascota> {
           'Veterinario': _datosVeterinarioController.text,
           'Num_Chip': _numeroChipController.text,
           'id_usuario': user.id,
-        }).select();
+        });
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Mascota guardada correctamente")),

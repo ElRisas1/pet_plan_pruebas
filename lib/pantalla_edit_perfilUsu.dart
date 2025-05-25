@@ -1,7 +1,9 @@
-import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 class PantallaEditPerfilUsu extends StatefulWidget {
   const PantallaEditPerfilUsu({super.key, required String title});
@@ -11,7 +13,8 @@ class PantallaEditPerfilUsu extends StatefulWidget {
 }
 
 class _PantallaEditPerfilUsuState extends State<PantallaEditPerfilUsu> {
-  File? _imagen;
+  Uint8List? _imagenBytes;
+  String? _fotoUrl;
   final picker = ImagePicker();
   final supabase = Supabase.instance.client;
 
@@ -47,7 +50,55 @@ class _PantallaEditPerfilUsuState extends State<PantallaEditPerfilUsu> {
       _emailController.text = data['Correo'] ?? '';
       _direccionController.text = data['Direccion'] ?? '';
       _cpController.text = data['CP']?.toString() ?? '';
+      _fotoUrl = data['Foto'];
     });
+  }
+
+  Future<void> _seleccionarImagen() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      Uint8List bytes;
+      if (kIsWeb) {
+        bytes = await pickedFile.readAsBytes();
+      } else {
+        bytes = await pickedFile.readAsBytes();
+      }
+
+      final user = supabase.auth.currentUser;
+      if (user == null) return;
+
+      final ext = pickedFile.name.split('.').last;
+      final fileName = 'perfil_${user.id}_${const Uuid().v4()}.$ext';
+      final filePath = 'usuarios/$fileName';
+
+      try {
+        await supabase.storage
+            .from('fotosusu')
+            .uploadBinary(filePath, bytes, fileOptions: const FileOptions(upsert: true));
+
+        final publicUrl = supabase.storage
+            .from('fotosusu')
+            .getPublicUrl(filePath);
+
+        await supabase
+            .from('Usuarios')
+            .update({'Foto': publicUrl})
+            .eq('user_id', user.id);
+
+        setState(() {
+          _fotoUrl = publicUrl;
+          _imagenBytes = bytes;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Foto actualizada correctamente")),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error al subir la imagen: $e")),
+        );
+      }
+    }
   }
 
   Future<void> _guardarDatos() async {
@@ -69,18 +120,14 @@ class _PantallaEditPerfilUsuState extends State<PantallaEditPerfilUsu> {
     );
   }
 
-  Future<void> _seleccionarImagen() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _imagen = File(pickedFile.path);
-      });
-      // Aquí podrías subir la imagen a Supabase Storage si lo deseas
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final ImageProvider avatar = _imagenBytes != null
+        ? MemoryImage(_imagenBytes!)
+        : (_fotoUrl != null && _fotoUrl!.isNotEmpty
+            ? NetworkImage(_fotoUrl!)
+            : const AssetImage('assets/default.png')) as ImageProvider;
+
     return Scaffold(
       backgroundColor: const Color(0xFFAECBFF),
       appBar: AppBar(
@@ -112,15 +159,12 @@ class _PantallaEditPerfilUsuState extends State<PantallaEditPerfilUsu> {
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 20),
-
                 Stack(
                   alignment: Alignment.bottomRight,
                   children: [
                     CircleAvatar(
                       radius: 50,
-                      backgroundImage: _imagen != null
-                          ? FileImage(_imagen!)
-                          : const AssetImage('assets/default.png') as ImageProvider,
+                      backgroundImage: avatar,
                     ),
                     Positioned(
                       bottom: 0,
@@ -139,9 +183,7 @@ class _PantallaEditPerfilUsuState extends State<PantallaEditPerfilUsu> {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 20),
-
                 _campoTexto('Nombre', _nombreController),
                 _campoTexto('Nickname', _nicknameController),
                 _campoTexto('Edad', _edadController),
@@ -149,9 +191,7 @@ class _PantallaEditPerfilUsuState extends State<PantallaEditPerfilUsu> {
                 _campoTexto('Email', _emailController),
                 _campoTexto('Dirección', _direccionController),
                 _campoTexto('Código Postal', _cpController),
-
                 const SizedBox(height: 20),
-
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -194,4 +234,3 @@ class _PantallaEditPerfilUsuState extends State<PantallaEditPerfilUsu> {
     );
   }
 }
-  

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:pet_plan_pruebas/pantalla_info_usu.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-// Pantallas
 import 'package:pet_plan_pruebas/pantalla_edit_perfilUsu.dart';
 import 'package:pet_plan_pruebas/pantalla_mascota.dart';
 import 'package:pet_plan_pruebas/pantalla_agregar_mascota.dart';
@@ -19,11 +17,13 @@ class PantallaPerfil extends StatefulWidget {
 class _PantallaPerfilState extends State<PantallaPerfil> {
   List<Map<String, dynamic>> mascotas = [];
   bool cargando = true;
+  String? _fotoUrl;
 
   @override
   void initState() {
     super.initState();
     _cargarMascotas();
+    _cargarFotoUsuario();
   }
 
   Future<void> _cargarMascotas() async {
@@ -41,6 +41,21 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
     setState(() {
       mascotas = List<Map<String, dynamic>>.from(data);
       cargando = false;
+    });
+  }
+
+  Future<void> _cargarFotoUsuario() async {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user == null) return;
+
+    final data = await Supabase.instance.client
+        .from('Usuarios')
+        .select('Foto')
+        .eq('user_id', user.id)
+        .single();
+
+    setState(() {
+      _fotoUrl = data['Foto'];
     });
   }
 
@@ -70,13 +85,12 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                   Container(
                     padding: const EdgeInsets.all(4),
                     decoration: const BoxDecoration(shape: BoxShape.circle),
-                    child: ClipOval(
-                      child: Image.asset(
-                        'assets/profile_pic.png',
-                        width: 140,
-                        height: 140,
-                        fit: BoxFit.cover,
-                      ),
+                    child: CircleAvatar(
+                      radius: 70,
+                      backgroundImage: _fotoUrl != null && _fotoUrl!.isNotEmpty
+                          ? NetworkImage(_fotoUrl!)
+                          : const AssetImage('assets/profile_pic.png') as ImageProvider,
+                      backgroundColor: Colors.grey[200],
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -236,7 +250,6 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
   }
 }
 
-// Botón de editar perfil
 class EditarPerfil extends StatelessWidget {
   const EditarPerfil({super.key});
 

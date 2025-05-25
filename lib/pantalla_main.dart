@@ -5,7 +5,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'pantalla_recordatorio.dart';
 import 'pantalla_ajustes.dart';
-import 'pantalla_ayuda.dart';
 import 'pantalla_chatia.dart';
 import 'pantalla_mascota.dart';
 import 'pantalla_perfil.dart';
@@ -24,42 +23,76 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
   List<Map<String, dynamic>> recordatorios = [];
   bool cargandoRecordatorios = true;
   bool cargandoMascotas = true;
+  String? _fotoPerfil;
 
   @override
   void initState() {
     super.initState();
     _cargarRecordatorios();
     _cargarMascotas();
+    _cargarFotoPerfil();
+  }
+
+  Future<void> _cargarFotoPerfil() async {
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user == null) return;
+
+      final data = await Supabase.instance.client
+          .from('Usuarios')
+          .select('Foto')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+      if (!mounted) return;
+
+      setState(() {
+        _fotoPerfil = data?['Foto'];
+      });
+    } catch (e) {
+      print("Error cargando foto de perfil: $e");
+    }
   }
 
   Future<void> _cargarMascotas() async {
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null) {
+      if (!mounted) return;
       setState(() => cargandoMascotas = false);
       return;
     }
 
-    final data = await Supabase.instance.client
-        .from('mascota')
-        .select()
-        .eq('id_usuario', user.id);
+    try {
+      final data = await Supabase.instance.client
+          .from('mascota')
+          .select()
+          .eq('id_usuario', user.id);
 
-    setState(() {
-      mascotas = List<Map<String, dynamic>>.from(data);
-      cargandoMascotas = false;
-    });
+      if (!mounted) return;
+      setState(() {
+        mascotas = List<Map<String, dynamic>>.from(data);
+        cargandoMascotas = false;
+      });
+    } catch (e) {
+      print("Error cargando mascotas: $e");
+      if (!mounted) return;
+      setState(() => cargandoMascotas = false);
+    }
   }
 
   Future<void> _cargarRecordatorios() async {
     try {
       final supabase = Supabase.instance.client;
       final data = await supabase.from('recordatorios').select().order('Fecha');
+
+      if (!mounted) return;
       setState(() {
         recordatorios = List<Map<String, dynamic>>.from(data);
         cargandoRecordatorios = false;
       });
     } catch (e) {
       print("Error cargando recordatorios: $e");
+      if (!mounted) return;
       setState(() {
         cargandoRecordatorios = false;
       });
@@ -86,15 +119,13 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Pet Plan"),
+        backgroundColor: const Color.fromARGB(100, 255, 242, 168),
+      ),
       backgroundColor: const Color.fromARGB(248, 238, 220, 138),
       body: Stack(
         children: [
-          AppBar(
-            title: const Text("Pet Plan"),
-            backgroundColor: const Color.fromARGB(100, 255, 242, 168),
-          ),
-
-          // Botón de ajustes
           Positioned(
             top: screenHeight * 0.06,
             left: screenWidth * 0.05,
@@ -113,8 +144,6 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
               ),
             ),
           ),
-
-          // Botón de perfil
           Positioned(
             top: screenHeight * 0.06,
             right: screenWidth * 0.05,
@@ -137,19 +166,24 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                     );
                   },
                   child: ClipOval(
-                    child: Image.asset(
-                      'assets/profile_pic.png',
-                      width: screenWidth * 0.2,
-                      height: screenWidth * 0.2,
-                      fit: BoxFit.cover,
-                    ),
+                    child: _fotoPerfil != null && _fotoPerfil!.isNotEmpty
+                        ? Image.network(
+                            _fotoPerfil!,
+                            width: screenWidth * 0.2,
+                            height: screenWidth * 0.2,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.asset(
+                            'assets/profile_pic.png',
+                            width: screenWidth * 0.2,
+                            height: screenWidth * 0.2,
+                            fit: BoxFit.cover,
+                          ),
                   ),
                 ),
               ),
             ),
           ),
-
-          // Título mascotas
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
@@ -160,8 +194,6 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
               ),
             ),
           ),
-
-          // Carrusel mascotas
           Positioned(
             top: screenHeight * 0.28,
             left: screenWidth * 0.05,
@@ -225,8 +257,6 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                     ),
                   ),
           ),
-
-          // Título recordatorios y botón +
           Positioned(
             top: screenHeight * 0.53,
             left: screenWidth * 0.1,
@@ -257,8 +287,6 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
               ],
             ),
           ),
-
-          // Caja de recordatorios
           Positioned(
             top: screenHeight * 0.6,
             left: screenWidth * 0.1,
@@ -314,8 +342,6 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         ),
             ),
           ),
-
-          // Botón hablar con IA
           Positioned(
             bottom: screenHeight * 0.05,
             left: screenWidth * 0.2,
