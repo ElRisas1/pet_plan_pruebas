@@ -8,16 +8,22 @@ import 'package:pet_plan_pruebas/pantalla_nuevoRecordatorio.dart';
 class PantallaMascota extends StatelessWidget {
   final String nombreMascota;
   final String imagenMascota;
+  final int edad;
+  final String raza;
+  final double peso;
   final List<String> recordatorios;
 
   PantallaMascota({
     super.key,
     required this.nombreMascota,
     required this.imagenMascota,
+    required this.edad,
+    required this.raza,
+    required this.peso,
   }) : recordatorios = [
           "Saca a Firulais a pasear",
           "Dale la pastilla a Luna",
-          "Hoy le toca veterinario a Max"
+          "Hoy le toca veterinario a Max",
         ];
 
   @override
@@ -34,7 +40,9 @@ class PantallaMascota extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Container(
             constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height - kToolbarHeight - MediaQuery.of(context).padding.top,
+              minHeight: MediaQuery.of(context).size.height -
+                  kToolbarHeight -
+                  MediaQuery.of(context).padding.top,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -50,7 +58,7 @@ class PantallaMascota extends StatelessWidget {
                 const SizedBox(height: 20),
                 _imagenPerfil(imagenMascota),
                 const SizedBox(height: 30),
-                _infoMascota(nombreMascota),
+                _infoMascota(nombreMascota, edad, raza, peso),
                 const SizedBox(height: 20),
                 _botonQR(context),
                 const SizedBox(height: 30),
@@ -79,6 +87,7 @@ class PantallaMascota extends StatelessWidget {
   }
 
   Widget _imagenPerfil(String imagen) {
+    final bool esUrl = imagen.startsWith('http');
     return Material(
       elevation: 8,
       shape: const CircleBorder(),
@@ -91,9 +100,10 @@ class PantallaMascota extends StatelessWidget {
         ),
         child: CircleAvatar(
           radius: 50,
-          backgroundImage: imagen.startsWith('http')
+          backgroundImage: esUrl
               ? NetworkImage(imagen)
               : AssetImage(imagen) as ImageProvider,
+          backgroundColor: Colors.grey[200],
         ),
       ),
     );
@@ -110,7 +120,10 @@ class PantallaMascota extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const PantallaEditarMascota(title: '', nombreMascota: '',),
+              builder: (context) => PantallaEditarMascota(
+                title: 'Editar Mascota',
+                nombreMascota: nombreMascota,
+              ),
             ),
           );
         },
@@ -118,7 +131,7 @@ class PantallaMascota extends StatelessWidget {
     );
   }
 
-  Widget _infoMascota(String nombre) {
+  Widget _infoMascota(String nombre, int edad, String raza, double peso) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -134,10 +147,15 @@ class PantallaMascota extends StatelessWidget {
         ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Aquí irá la información de $nombre",
-            style: const TextStyle(fontSize: 18),
-          )
+          Text("Nombre: $nombre", style: const TextStyle(fontSize: 18)),
+          const SizedBox(height: 8),
+          Text("Edad: $edad años", style: const TextStyle(fontSize: 18)),
+          const SizedBox(height: 8),
+          Text("Raza: $raza", style: const TextStyle(fontSize: 18)),
+          const SizedBox(height: 8),
+          Text("Peso: ${peso.toStringAsFixed(1)} kg", style: const TextStyle(fontSize: 18)),
         ],
       ),
     );

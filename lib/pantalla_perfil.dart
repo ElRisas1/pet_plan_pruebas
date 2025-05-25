@@ -19,13 +19,11 @@ class PantallaPerfil extends StatefulWidget {
 class _PantallaPerfilState extends State<PantallaPerfil> {
   List<Map<String, dynamic>> mascotas = [];
   bool cargando = true;
-  Map<String, dynamic>? datosUsuario;
 
   @override
   void initState() {
     super.initState();
     _cargarMascotas();
-    _cargarDatosUsuario();
   }
 
   Future<void> _cargarMascotas() async {
@@ -46,21 +44,6 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
     });
   }
 
-  Future<void> _cargarDatosUsuario() async {
-    final user = Supabase.instance.client.auth.currentUser;
-    if (user == null) return;
-
-    final data = await Supabase.instance.client
-        .from('Usuarios')
-        .select()
-        .eq('user_id', user.id)
-        .single();
-
-    setState(() {
-      datosUsuario = data;
-    });
-  }
-
   void _cerrarSesion(BuildContext context) async {
     await Supabase.instance.client.auth.signOut();
 
@@ -74,12 +57,9 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    final nombre = datosUsuario != null ? datosUsuario!['Nombre'] ?? 'Usuario' : 'Cargando...';
-    final correo = datosUsuario != null ? datosUsuario!['Correo'] ?? '' : '';
-
     return Scaffold(
       backgroundColor: const Color.fromARGB(248, 152, 184, 239),
-      appBar: AppBar(title: Text(nombre)),
+      appBar: AppBar(title: const Text("nombre del usuario")),
       body: SafeArea(
         child: Stack(
           children: [
@@ -100,8 +80,8 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Text('@$correo', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  Text(nombre, style: const TextStyle(fontSize: 20)),
+                  const Text('@perfilprueba1', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const Text('Pedro', style: TextStyle(fontSize: 20)),
                   const SizedBox(height: 20),
                   Center(
                     child: FractionallySizedBox(
@@ -111,7 +91,7 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         color: Colors.white,
-                        elevation: 6, 
+                        elevation: 6,
                         child: const Padding(
                           padding: EdgeInsets.all(16),
                           child: Text(
@@ -143,7 +123,7 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
+                      boxShadow: const [
                         BoxShadow(
                           color: Colors.black26,
                           blurRadius: 8,
@@ -156,20 +136,56 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                         const Text('Tus mascotas', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 10),
                         cargando
-                          ? const CircularProgressIndicator()
-                          : CarouselSlider(
-                              items: [
-                                ...mascotas.map((mascota) {
-                                  return GestureDetector(
+                            ? const CircularProgressIndicator()
+                            : CarouselSlider(
+                                items: [
+                                  ...mascotas.map((mascota) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => PantallaMascota(
+                                              nombreMascota: mascota['Nombre'] ?? 'Sin nombre',
+                                              imagenMascota: mascota['Foto'] ?? '',
+                                              edad: mascota['Edad'] ?? 0,
+                                              raza: mascota['Raza'] ?? 'Desconocida',
+                                              peso: (mascota['Peso'] != null)
+                                                  ? double.tryParse(mascota['Peso'].toString()) ?? 0.0
+                                                  : 0.0,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 40,
+                                            backgroundImage: (mascota['Foto'] != null &&
+                                                    mascota['Foto'].toString().isNotEmpty)
+                                                ? NetworkImage(mascota['Foto'])
+                                                : null,
+                                            child: (mascota['Foto'] == null ||
+                                                    mascota['Foto'].toString().isEmpty)
+                                                ? const Icon(Icons.pets, size: 30, color: Colors.grey)
+                                                : null,
+                                            backgroundColor: Colors.grey[200],
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Text(
+                                            mascota['Nombre'] ?? 'Sin nombre',
+                                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }),
+                                  GestureDetector(
                                     onTap: () {
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(
-                                          builder: (context) => PantallaMascota(
-                                            nombreMascota: mascota['Nombre'] ?? 'Sin nombre',
-                                            imagenMascota: mascota['Foto'] ?? '',
-                                          ),
-                                        ),
+                                        MaterialPageRoute(builder: (context) => PantallaAgregarMascota()),
                                       );
                                     },
                                     child: Column(
@@ -177,50 +193,21 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                                       children: [
                                         CircleAvatar(
                                           radius: 40,
-                                          backgroundImage: (mascota['Foto'] != null && mascota['Foto'].toString().isNotEmpty)
-                                              ? NetworkImage(mascota['Foto'])
-                                              : null,
-                                          child: (mascota['Foto'] == null || mascota['Foto'].toString().isEmpty)
-                                              ? const Icon(Icons.pets, size: 30, color: Colors.grey)
-                                              : null,
-                                          backgroundColor: Colors.grey[200],
+                                          backgroundColor: Colors.blue[100],
+                                          child: const Icon(Icons.add, color: Colors.green, size: 30),
                                         ),
                                         const SizedBox(height: 10),
-                                        Text(
-                                          mascota['Nombre'] ?? 'Sin nombre',
-                                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                        ),
+                                        const Text('Añadir mascota', style: TextStyle(fontSize: 16)),
                                       ],
                                     ),
-                                  );
-                                }),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => PantallaAgregarMascota()),
-                                    );
-                                  },
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 40,
-                                        backgroundColor: Colors.blue[100],
-                                        child: const Icon(Icons.add, color: Colors.green, size: 30),
-                                      ),
-                                      const SizedBox(height: 10),
-                                      const Text('Añadir mascota', style: TextStyle(fontSize: 16)),
-                                    ],
                                   ),
+                                ],
+                                options: CarouselOptions(
+                                  height: 150,
+                                  enlargeCenterPage: true,
+                                  enableInfiniteScroll: false,
                                 ),
-                              ],
-                              options: CarouselOptions(
-                                height: 150,
-                                enlargeCenterPage: true,
-                                enableInfiniteScroll: false,
                               ),
-                            ),
                       ],
                     ),
                   ),
@@ -249,7 +236,7 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
   }
 }
 
-//Class para boton de Editar perfil.
+// Botón de editar perfil
 class EditarPerfil extends StatelessWidget {
   const EditarPerfil({super.key});
 
